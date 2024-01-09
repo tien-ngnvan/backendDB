@@ -16,7 +16,7 @@ from src.entity.schema import RESPONSE_TEXT_TYPE
 from src.entity.node import BaseNode, MetadataMode, NodeWithScore
 from src.entity.retriever import QueryBundle
 from src.entity.service_context import ServiceContext
-from src.components.prompt import PromptMixin
+from src.entity.prompt import PromptMixin
 from .types import *
 
 logger = logging.getLogger(__name__)
