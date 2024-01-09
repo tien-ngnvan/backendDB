@@ -8,8 +8,8 @@ from typing import (
     Dict
 )
 
-from rag.entity.node.base_node import BaseNode
-from llama_index.bridge.pydantic import BaseModel, StrictInt, StrictFloat, StrictStr
+from src.entity.node import BaseNode
+from src.bridge.pydantic import BaseModel, StrictInt, StrictFloat, StrictStr
 
 class ExactMatchFilter(BaseModel):
     """Exact match metadata filter for vector stores.

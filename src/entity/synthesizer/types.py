@@ -3,10 +3,10 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
-from llama_index.bridge.pydantic import BaseModel
-from rag.entity.node import NodeWithScore
-from rag.entity.schema import TokenGen
-from rag.utils.utils import truncate_text
+from src.bridge.pydantic import BaseModel
+from src.entity.node import NodeWithScore
+from src.entity.schema import TokenGen
+from src.utils.utils import truncate_text
 
 @dataclass
 class Response:

@@ -17,8 +17,8 @@ from typing import (
     Dict
 )
 
-from rag.bridge.pydantic import BaseModel
-from rag.entity.llm.base_llm import ChatMessage, MessageRole
+from src.bridge.pydantic import BaseModel
+from src.entity.llm.base_llm import ChatMessage, MessageRole
 from typing_extensions import Self
 
 

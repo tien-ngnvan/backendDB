@@ -2,16 +2,15 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-import llama_index
-from llama_index.bridge.pydantic import BaseModel
-from llama_index.callbacks.base import CallbackManager
+from src.bridge.pydantic import BaseModel
+from src.entity.callbacks import CallbackManager
 from llama_index.embeddings.base import BaseEmbedding
 from llama_index.embeddings.utils import EmbedType, resolve_embed_model
 from llama_index.indices.prompt_helper import PromptHelper
 from llama_index.llm_predictor import LLMPredictor
 from llama_index.llm_predictor.base import BaseLLMPredictor, LLMMetadata
-from llama_index.llms.base import LLM
-from llama_index.llms.utils import LLMType, resolve_llm
+from src.entity.llm import LLM
+from src.entity.llm import LLMType, resolve_llm
 
 
 from rag.components.node_parser import TextNodesParser
@@ -21,7 +20,7 @@ from llama_index.node_parser.text.sentence import (
     SentenceSplitter,
     TextSplitter
 )
-from llama_index.prompts.base import BasePromptTemplate
+from src.entity.prompt import BasePromptTemplate
 from llama_index.schema import TransformComponent
 from llama_index.types import PydanticProgramMode
 

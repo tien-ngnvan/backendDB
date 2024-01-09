@@ -5,7 +5,7 @@ from abc import abstractmethod
 from hashlib import sha256
 
 from .types import *
-from rag.utils.utils import SAMPLE_TEXT, truncate_text
+from src.utils.utils import SAMPLE_TEXT, truncate_text
 
 DEFAULT_TEXT_NODE_TMPL = "{metadata_str}\n\n{content}"
 DEFAULT_METADATA_TMPL = "{key}: {value}"
