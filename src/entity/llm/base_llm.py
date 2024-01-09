@@ -9,7 +9,7 @@ from src.entity.schema import (
     TokenAsyncGen,
     TokenGen,
 )
-from src.components.prompt.prompt_template import PromptTemplate
+from src.entity.prompt import PromptTemplate
 
 from .types import *
 from .utils import (

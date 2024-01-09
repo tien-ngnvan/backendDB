@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from typing import Any, Sequence, AsyncGenerator, Generator, Optional
 
-from llama_index.bridge.pydantic import BaseModel, Field, validator, StrictStr
-from rag.entity.callbacks import CallbackManager
-from rag.constants import DEFAULT_CONTEXT_WINDOW, DEFAULT_NUM_OUTPUTS
-from rag.entity.schema import BaseComponent
+from src.bridge.pydantic import BaseModel, Field, validator, StrictStr
+from src.entity.callbacks import CallbackManager
+from src.constants import DEFAULT_CONTEXT_WINDOW, DEFAULT_NUM_OUTPUTS
+from src.entity.schema import BaseComponent
 
 class MessageRole(StrictStr):
     """Message role."""
