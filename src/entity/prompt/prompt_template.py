@@ -1,6 +1,6 @@
 """Prompts."""
 from copy import deepcopy
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 import logging
 
 from src.entity.schema import BaseOutputParser
@@ -84,6 +84,152 @@ class PromptTemplate(BasePromptTemplate):
         return self.template
 
 
+class ChatPromptTemplate(BasePromptTemplate):
+    message_templates: List[ChatMessage]
+
+    def __init__(
+        self,
+        message_templates: List[ChatMessage],
+        prompt_type: str = PromptType.CUSTOM,
+        output_parser: Optional[BaseOutputParser] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        template_var_mappings: Optional[Dict[str, Any]] = None,
+        function_mappings: Optional[Dict[str, Callable]] = None,
+        **kwargs: Any,
+    ):
+        if metadata is None:
+            metadata = {}
+        metadata["prompt_type"] = prompt_type
+
+        template_vars = []
+        for message_template in message_templates:
+            template_vars.extend(get_template_vars(message_template.content or ""))
+
+        super().__init__(
+            message_templates=message_templates,
+            kwargs=kwargs,
+            metadata=metadata,
+            output_parser=output_parser,
+            template_vars=template_vars,
+            template_var_mappings=template_var_mappings,
+            function_mappings=function_mappings,
+        )
+
+    def partial_format(self, **kwargs: Any) -> "ChatPromptTemplate":
+        prompt = deepcopy(self)
+        prompt.kwargs.update(kwargs)
+        return prompt
+
+    def format(self, llm: Optional[LLM] = None, **kwargs: Any) -> str:
+        del llm  # unused
+        messages = self.format_messages(**kwargs)
+        return messages_to_prompt(messages)
+
+    def format_messages(
+        self, llm: Optional[LLM] = None, **kwargs: Any
+    ) -> List[ChatMessage]:
+        del llm  # unused
+        """Format the prompt into a list of chat messages."""
+        all_kwargs = {
+            **self.kwargs,
+            **kwargs,
+        }
+        mapped_all_kwargs = self._map_all_vars(all_kwargs)
+
+        messages: List[ChatMessage] = []
+        for message_template in self.message_templates:
+            template_vars = get_template_vars(message_template.content or "")
+            relevant_kwargs = {
+                k: v for k, v in mapped_all_kwargs.items() if k in template_vars
+            }
+            content_template = message_template.content or ""
+
+            # if there's mappings specified, make sure those are used
+            content = content_template.format(**relevant_kwargs)
+
+            message: ChatMessage = message_template.copy()
+            message.content = content
+            messages.append(message)
+
+        if self.output_parser is not None:
+            messages = self.output_parser.format_messages(messages)
+
+        return messages
+
+    def get_template(self, llm: Optional[LLM] = None) -> str:
+        return messages_to_prompt(self.message_templates)
+    
+class SelectorPromptTemplate(BasePromptTemplate):
+    default_template: BasePromptTemplate
+    conditionals: Optional[
+        List[Tuple[Callable[[LLM], bool], BasePromptTemplate]]
+    ] = None
+
+    def __init__(
+        self,
+        default_template: BasePromptTemplate,
+        conditionals: Optional[
+            List[Tuple[Callable[[LLM], bool], BasePromptTemplate]]
+        ] = None,
+    ):
+        metadata = default_template.metadata
+        kwargs = default_template.kwargs
+        template_vars = default_template.template_vars
+        output_parser = default_template.output_parser
+        super().__init__(
+            default_template=default_template,
+            conditionals=conditionals,
+            metadata=metadata,
+            kwargs=kwargs,
+            template_vars=template_vars,
+            output_parser=output_parser,
+        )
+
+    def select(self, llm: Optional[LLM] = None) -> BasePromptTemplate:
+        # ensure output parser is up to date
+        self.default_template.output_parser = self.output_parser
+
+        if llm is None:
+            return self.default_template
+
+        if self.conditionals is not None:
+            for condition, prompt in self.conditionals:
+                if condition(llm):
+                    # ensure output parser is up to date
+                    prompt.output_parser = self.output_parser
+                    return prompt
+
+        return self.default_template
+
+    def partial_format(self, **kwargs: Any) -> "SelectorPromptTemplate":
+        default_template = self.default_template.partial_format(**kwargs)
+        if self.conditionals is None:
+            conditionals = None
+        else:
+            conditionals = [
+                (condition, prompt.partial_format(**kwargs))
+                for condition, prompt in self.conditionals
+            ]
+        return SelectorPromptTemplate(
+            default_template=default_template, conditionals=conditionals
+        )
+
+    def format(self, llm: Optional[LLM] = None, **kwargs: Any) -> str:
+        """Format the prompt into a string."""
+        prompt = self.select(llm=llm)
+        return prompt.format(**kwargs)
+
+    def format_messages(
+        self, llm: Optional[LLM] = None, **kwargs: Any
+    ) -> List[ChatMessage]:
+        """Format the prompt into a list of chat messages."""
+        prompt = self.select(llm=llm)
+        return prompt.format_messages(**kwargs)
+
+    def get_template(self, llm: Optional[LLM] = None) -> str:
+        prompt = self.select(llm=llm)
+        return prompt.get_template(llm=llm)
+    
 class ChatPromptTemplate(BasePromptTemplate):
     message_templates: List[ChatMessage]
 
