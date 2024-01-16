@@ -324,17 +324,21 @@ class MilvusVectorStore(VectorStore):
         # provided to ensure that the index is created in the constructor even
         # if self.overwrite is false. In the `add` method, the index is
         # recreated only if self.overwrite is true.
+
+        # release out of memory first
+        self.collection.release()
+        # drop index of that field before build new overwrite index
         if (self.collection.has_index() and self.overwrite) or force:
-            self.collection.release()
             self.collection.drop_index()
-            base_params: Dict[str, Any] = self.index_config.copy()
-            index_type: str = base_params.pop("index_type", "FLAT")
-            index_params: Dict[str, Union[str, Dict[str, Any]]] = {
-                "params": base_params,
-                "metric_type": self.similarity_metric,
-                "index_type": index_type,
-            }
-            self.collection.create_index(
-                self.embedding_field, index_params=index_params
-            )
-            self.collection.load()
+        # set params
+        base_params: Dict[str, Any] = self.index_config.copy()
+        index_type: str = base_params.pop("index_type", "FLAT")
+        index_params: Dict[str, Union[str, Dict[str, Any]]] = {
+            "params": base_params,
+            "metric_type": self.similarity_metric,
+            "index_type": index_type,
+        }
+        self.collection.create_index(
+            self.embedding_field, index_params=index_params
+        )
+        print("Create index succesfully")
