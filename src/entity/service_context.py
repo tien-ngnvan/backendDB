@@ -2,27 +2,25 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
+from llama_index.indices.prompt_helper import PromptHelper
 from src.bridge.pydantic import BaseModel
 from src.entity.callbacks import CallbackManager
-from llama_index.embeddings.base import BaseEmbedding
-from llama_index.embeddings.utils import EmbedType, resolve_embed_model
-from llama_index.indices.prompt_helper import PromptHelper
-from llama_index.llm_predictor import LLMPredictor
-from llama_index.llm_predictor.base import BaseLLMPredictor, LLMMetadata
+from src.entity.embeddings import BaseEmbedding
+from src.entity.embeddings.utils import EmbedType, resolve_embed_model
 from src.entity.llm import LLM
 from src.entity.llm import LLMType, resolve_llm
 
 
-from rag.components.node_parser import TextNodesParser
-from llama_index.node_parser.text.sentence import (
+from src.entity.node_parser import TextNodesParser
+from src.entity.node_parser import (
     DEFAULT_CHUNK_SIZE,
     SENTENCE_CHUNK_OVERLAP,
     SentenceSplitter,
     TextSplitter
 )
 from src.entity.prompt import BasePromptTemplate
-from llama_index.schema import TransformComponent
-from llama_index.types import PydanticProgramMode
+from .schema import TransformComponent
+from .output_parser import PydanticProgramMode
 
 logger = logging.getLogger(__name__)
 
