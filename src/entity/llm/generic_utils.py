@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from typing import Callable, cast, Any, Awaitable, List, Optional, Sequence
 import os
 
-from src.entity.callbacks import CBEventType, EventPayload
+from rag.entity.callbacks import CBEventType, EventPayload, CallbackManager
 from .types import *
 
 def llm_chat_callback() -> Callable:
@@ -257,6 +257,9 @@ def llm_completion_callback() -> Callable:
     return wrap
 
 
+#####################
+# Transform message #
+#####################
 def messages_to_history_str(messages: Sequence[ChatMessage]) -> str:
     """Convert messages to a history string."""
     string_messages = []
