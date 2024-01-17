@@ -3,8 +3,8 @@
 ## Preparation
 ### Setup Environment
 ```
-conda create -n wiki python==3.10 -y
-conda activate wiki
+conda create -n backend python==3.10 -y
+conda activate backend
 pip install -r requirements.txt
 ```
 ### Setup Milvus server
