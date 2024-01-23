@@ -6,8 +6,8 @@ An index that is built within Milvus.
 import logging
 from typing import Any, Dict, List, Optional, Union
 
-from src.entity.node import BaseNode, TextNode
-from src.entity.vector_store import (
+from src.node.base_node import BaseNode, TextNode
+from src.vector_stores import (
     MetadataFilters,
     VectorStore,
     VectorStoreQuery,

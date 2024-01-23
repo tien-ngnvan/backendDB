@@ -8,7 +8,7 @@ from typing import (
     Dict
 )
 
-from src.entity.node import BaseNode
+from src.node.base_node import BaseNode
 from src.bridge.pydantic import BaseModel, StrictInt, StrictFloat, StrictStr
 
 class ExactMatchFilter(BaseModel):

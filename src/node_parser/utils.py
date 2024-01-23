@@ -5,13 +5,13 @@ import logging
 import uuid
 from typing import List, Optional, Protocol, runtime_checkable
 
-from rag.entity.node import (
+from src.node.base_node import (
     BaseNode,
     Document,
     NodeRelationship,
     TextNode,
 )
-from rag.utils.utils import truncate_text
+from src.utils.utils import truncate_text
 
 logger = logging.getLogger(__name__)
 

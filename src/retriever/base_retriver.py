@@ -2,10 +2,10 @@
 from abc import abstractmethod
 from typing import List, Optional
 
-from src.entity.callbacks import CallbackManager, CBEventType, EventPayload
-from src.entity.node import NodeWithScore
-from src.entity.service_context import ServiceContext
-from src.entity.prompt.mixin import PromptDictType, PromptMixin, PromptMixinType
+from src.callbacks import CallbackManager, CBEventType, EventPayload
+from src.node import NodeWithScore
+from src.core.service_context import ServiceContext
+
 from .types import *
 
 class BaseRetriever(PromptMixin):

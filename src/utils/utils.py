@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Iterable
 
 # Sample text from llama_index's readme
 SAMPLE_TEXT = """
@@ -117,3 +117,18 @@ def truncate_text(text: str, max_length: int) -> str:
     if len(text) <= max_length:
         return text
     return text[: max_length - 3] + "..."
+
+
+def get_tqdm_iterable(items: Iterable, show_progress: bool, desc: str) -> Iterable:
+    """
+    Optionally get a tqdm iterable. Ensures tqdm.auto is used.
+    """
+    _iterator = items
+    if show_progress:
+        try:
+            from tqdm.auto import tqdm
+
+            return tqdm(items, desc=desc)
+        except ImportError:
+            pass
+    return _iterator

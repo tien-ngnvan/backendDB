@@ -2,16 +2,16 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Sequence
 
-from rag.bridge.pydantic import Field
-from rag.entity.callbacks import CallbackManager, CBEventType, EventPayload
-from rag.entity.node import (
+from src.bridge.pydantic import Field
+from src.callbacks import CallbackManager, CBEventType, EventPayload
+from src.node.base_node import (
     BaseNode,
     Document,
     MetadataMode,
     NodeRelationship
 )
-from rag.entity.schema import TransformComponent
-from rag.utils.utils import get_tqdm_iterable
+from src.core.schema import TransformComponent
+from src.utils.utils import get_tqdm_iterable
 from .utils import (
     IdFuncCallable,
     build_nodes_from_splits,

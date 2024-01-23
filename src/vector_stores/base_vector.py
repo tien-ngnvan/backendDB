@@ -6,7 +6,7 @@ from typing import (
 )
 import fsspec
 
-from src.entity.node import BaseNode
+from src.node.base_node import BaseNode
 from .types import *
 
 @runtime_checkable

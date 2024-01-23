@@ -1,9 +1,8 @@
 import json
 from typing import Any, Dict, Optional, Tuple
 
-from src.entity.node import (
+from src.node.base_node import (
     BaseNode,
-    ImageNode,
     IndexNode,
     NodeRelationship,
     RelatedNodeInfo,
