@@ -7,11 +7,11 @@ from typing import Any, Callable, Coroutine, List, Optional, Tuple
 
 import numpy as np
 
-from rag.bridge.pydantic import Field, validator
-from rag.entity.callbacks import CallbackManager, CBEventType, EventPayload
-from rag.entity.schema import TransformComponent
-from rag.entity.node import MetadataMode, BaseNode
-from rag.utils.utils import get_tqdm_iterable
+from src.bridge.pydantic import Field, validator
+from src.callbacks import CallbackManager, CBEventType, EventPayload
+from src.core.schema import TransformComponent
+from src.node import MetadataMode, BaseNode
+from src.utils.utils import get_tqdm_iterable
 
 # TODO: change to numpy array
 Embedding = List[float]
