@@ -8,7 +8,7 @@ from src.core.service_context import ServiceContext
 
 from .types import *
 
-class BaseRetriever(PromptMixin):
+class BaseRetriever:
     """Base retriever."""
 
     def __init__(self, callback_manager: Optional[CallbackManager] = None) -> None:
@@ -18,17 +18,6 @@ class BaseRetriever(PromptMixin):
         """Check callback manager."""
         if not hasattr(self, "callback_manager"):
             self.callback_manager = CallbackManager()
-
-    def _get_prompts(self) -> PromptDictType:
-        """Get prompts."""
-        return {}
-
-    def _get_prompt_modules(self) -> PromptMixinType:
-        """Get prompt modules."""
-        return {}
-
-    def _update_prompts(self, prompts: PromptDictType) -> None:
-        """Update prompts."""
 
     def retrieve(self, str_or_query_bundle: QueryType) -> List[NodeWithScore]:
         """Retrieve nodes given query.
