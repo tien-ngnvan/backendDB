@@ -3,7 +3,6 @@ import textwrap
 import uuid
 from abc import abstractmethod
 from hashlib import sha256
-from io import BytesIO
 
 from .types import *
 from src.utils.utils import SAMPLE_TEXT, truncate_text
@@ -14,7 +13,6 @@ DEFAULT_METADATA_TMPL = "{key}: {value}"
 TRUNCATE_LENGTH = 350
 WRAP_WIDTH = 70
 
-ImageType = Union[str, BytesIO]
 
 # Node classes for indexes
 class BaseNode(BaseModel):
@@ -256,9 +254,6 @@ class TextNode(BaseNode):
         """Deprecated: Get node info."""
         return self.get_node_info()
 
-
-# TODO: legacy backport of old Node class
-Node = TextNode
 
 class IndexNode(TextNode):
     """Node with reference to any object.
