@@ -132,3 +132,53 @@ def get_tqdm_iterable(items: Iterable, show_progress: bool, desc: str) -> Iterab
         except ImportError:
             pass
     return _iterator
+
+
+"""support for service context"""
+from typing import (
+    Callable,
+    Union,
+    Any,
+    Protocol,
+    runtime_checkable,
+    Iterable,
+)
+from functools import partial
+import os
+
+# global tokenizer
+global_tokenizer: Optional[Callable[[str], list]] = None
+
+# Global Tokenizer
+@runtime_checkable
+class Tokenizer(Protocol):
+    def encode(self, text: str, *args: Any, **kwargs: Any) -> List[Any]:
+        ...
+
+
+def set_global_tokenizer(tokenizer: Union[Tokenizer, Callable[[str], list]]) -> None:
+    global global_tokenizer
+    if isinstance(tokenizer, Tokenizer):
+        global_tokenizer = tokenizer.encode
+    else:
+        global_tokenizer = tokenizer
+
+
+def get_tokenizer() -> Callable[[str], List]:
+    global global_tokenizer
+    if global_tokenizer is None:
+        transformer_import_err = (
+            "`sentence_transformers` package not found, please run `pip install sentence_transformers`"
+        )
+        try:
+            from sentence_transformers import SentenceTransformer
+        except ImportError:
+            raise ImportError(transformer_import_err)
+
+        enc = SentenceTransformer("BAAI/bge-base-en-v1.5")
+        tokenizer = partial(enc.encode, allowed_special="all")
+        print("Setting global tokenizer")
+        set_global_tokenizer(tokenizer)
+
+    assert global_tokenizer is not None
+    return global_tokenizer
