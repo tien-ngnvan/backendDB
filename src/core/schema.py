@@ -8,7 +8,7 @@ from typing import (
 )
 
 from src.bridge.pydantic import BaseModel
-from src.node.base_node import BaseNode
+from src.entity.node.base_node import BaseNode
 from typing_extensions import Self
 
 

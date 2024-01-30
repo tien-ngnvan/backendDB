@@ -39,6 +39,7 @@ class BaseNode(BaseModel):
     metadata: Dict[str, Any] = Field(
         default_factory=dict,
         description="A flat dictionary of metadata fields",
+        alias="extra_info",
     )
     excluded_embed_metadata_keys: List[str] = Field(
         default_factory=list,
@@ -75,14 +76,6 @@ class BaseNode(BaseModel):
     @property
     def node_id(self):
         return self.id_
-    
-    @property
-    def ref_doc_id(self) -> Optional[str]:
-        """Deprecated: Get ref doc id."""
-        source_node = self.source_node
-        if source_node is None:
-            return None
-        return source_node.node_id
 
     @property
     def source_node(self) -> Optional[RelatedNodeInfo]:
@@ -352,45 +345,6 @@ class NodeWithScore(BaseModel):
     def get_embedding(self) -> List[float]:
         return self.node.get_embedding()
 
-class ImageNode(TextNode):
-    """Node with image."""
-
-    # TODO: store reference instead of actual image
-    # base64 encoded image str
-    image: Optional[str] = None
-    image_path: Optional[str] = None
-    image_url: Optional[str] = None
-    image_mimetype: Optional[str] = None
-    text_embedding: Optional[List[float]] = Field(
-        default=None,
-        description="Text embedding of image node, if text field is filled out",
-    )
-
-    @classmethod
-    def get_type(cls) -> str:
-        return ObjectType.IMAGE
-
-    @classmethod
-    def class_name(cls) -> str:
-        return "ImageNode"
-
-    def resolve_image(self) -> ImageType:
-        """Resolve an image such that PIL can read it."""
-        if self.image is not None:
-            import base64
-
-            return BytesIO(base64.b64decode(self.image))
-        elif self.image_path is not None:
-            return self.image_path
-        elif self.image_url is not None:
-            # load image from URL
-            import requests
-
-            response = requests.get(self.image_url)
-            return BytesIO(response.content)
-        else:
-            raise ValueError("No image found in node.")
-
 
 # Document Classes for Readers
 
@@ -407,6 +361,8 @@ class Document(TextNode):
         description="Unique ID of the node.",
         alias="doc_id",
     )
+
+    _compat_fields = {"doc_id": "id_", "extra_info": "metadata"}
 
     @classmethod
     def get_type(cls) -> str:
