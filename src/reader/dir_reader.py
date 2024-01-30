@@ -12,8 +12,8 @@ from typing import Any, Callable, Dict, Generator, List, Optional, Type
 
 from tqdm import tqdm
 
-from rag.entity.node.base_node import Document
-from rag.entity.reader.base_reader import BaseReader
+from src.node.base_node import Document
+from src.reader.base_reader import BaseReader
 from .file.docx import DocxReader
 
 
