@@ -171,14 +171,13 @@ def get_tokenizer() -> Callable[[str], List]:
             "`sentence_transformers` package not found, please run `pip install sentence_transformers`"
         )
         try:
-            from sentence_transformers import SentenceTransformer
+            from transformers import AutoTokenizer
         except ImportError:
             raise ImportError(transformer_import_err)
 
-        enc = SentenceTransformer("BAAI/bge-base-en-v1.5")
-        tokenizer = partial(enc.encode, allowed_special="all")
+        tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-base-en-v1.5")
         print("Setting global tokenizer")
-        set_global_tokenizer(tokenizer)
+        set_global_tokenizer(tokenizer.encode)
 
     assert global_tokenizer is not None
     return global_tokenizer
