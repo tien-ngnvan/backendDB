@@ -39,3 +39,12 @@ Connect to Milvus through port:
 docker port milvus-standalone 19530/tcp
 ```
 
+## Test splitter
+Open file `notebooks/test_splitter.ipynb` and select kernel (`backend` environment). Then, feel free to test 🦙
+
+Some arguement need to test:
+1. `separator`: str = " ",
+2. `chunk_size`: int = 200,
+4. `chunk_overlap`: int = 20,
+5. `paragraph_separator`: str = "\n\n\n",
+6. `secondary_chunking_regex`: str = "[^.。？！]+[.。？！]?"
