@@ -1,6 +1,6 @@
 # backendDB
 
-![backend](assert\backendDBpng.png)
+![backend](assert/backendDBpng.png)
 
 
 
