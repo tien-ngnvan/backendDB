@@ -4,7 +4,10 @@ from typing import Dict, Optional, Sequence
 import fsspec
 
 from src.node.base_node import BaseNode, TextNode
-from src.storage.docstore.base import (
+from src.storage.kv_store.simple_kvstore import SimpleKVStore
+from src.utils.files import concat_dirs
+
+from .base import (
     DEFAULT_BATCH_SIZE,
     DEFAULT_PERSIST_DIR,
     DEFAULT_PERSIST_FNAME,
@@ -12,9 +15,6 @@ from src.storage.docstore.base import (
     BaseDocumentStore,
     RefDocInfo
 )
-from src.storage.kv_store.simple_kvstore import SimpleKVStore
-from src.storage.kv_store.base import BaseInMemoryKVStore
-from src.utils.utils import concat_dirs
 from .utils import doc_to_json, json_to_doc
 
 DEFAULT_NAMESPACE = "docstore"

@@ -57,3 +57,14 @@ def get_size(path: Path) -> int:
     """
     size_in_kb = round(os.path.getsize(path)/1024)
     return int(size_in_kb)
+
+
+def concat_dirs(dirname: str, basename: str) -> str:
+    """
+    Append basename to dirname, avoiding backslashes when running on windows.
+
+    os.path.join(dirname, basename) will add a backslash before dirname if
+    basename does not end with a slash, so we make sure it does.
+    """
+    dirname += "/" if dirname[-1] != "/" else ""
+    return os.path.join(dirname, basename)

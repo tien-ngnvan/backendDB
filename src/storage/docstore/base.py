@@ -3,10 +3,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence
 
-import fsspec
 from dataclasses_json import DataClassJsonMixin
 
-from src.node import BaseNode
+from src.node.base_node import BaseNode
 
 DEFAULT_PERSIST_FNAME = "docstore.json"
 DEFAULT_PERSIST_DIR = "./storage"

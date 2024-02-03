@@ -1,5 +1,5 @@
-from rag.constants import DATA_KEY, TYPE_KEY
-from rag.entity.node import (
+from src.constants import DATA_KEY, TYPE_KEY
+from src.node import (
     BaseNode,
     Document,
     IndexNode,
