@@ -5,6 +5,9 @@ class ViNormalizer:
 
     language: str
 
+    def __init__(self) -> None:
+        pass
+
     def normalize(
         self,
         text: str,
@@ -12,6 +15,18 @@ class ViNormalizer:
     ) -> str:
         """Add nodes with embedding to vector store."""
         from underthesea import text_normalize
+        #TODO:
+        """
+        (1) copy cái emotion -> gán qua đây
+        (2) features:
+            - remove icon, (có sẵn)
+            - remove bullet (research)
+            - html tags:  </p> (research)
+            - remove multiple space: strip() (có sẵn)
+        (3) specify type:
+            - chỉnh lại bên en
+            - format bên vi: chỉnh init, chỉnh type input output của def
+        """
         return text_normalize(text)
 
     async def async_normalize(
