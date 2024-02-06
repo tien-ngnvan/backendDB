@@ -24,9 +24,9 @@ class EngNormalizer:
         text: str,
         **add_kwargs: Any,
     ) -> str:
-        norm_text = "" 
+        norm_text = text
         for norm_fun in self._normalize_fns:
-            norm_text = norm_fun(text)
+            norm_text = norm_fun(norm_text)
         return norm_text
 
     async def async_normalize(
