@@ -393,8 +393,6 @@ class Document(TextNode):
         return self.id_
 
     def __setattr__(self, name: str, value: object) -> None:
-        if name in self._compat_fields:
-            name = self._compat_fields[name]
         super().__setattr__(name, value)
 
     @classmethod
