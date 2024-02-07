@@ -147,7 +147,10 @@ class RecursiveCharacterTextSplitter(TextSplitter):
         return self._split_text(text, self.separators)
 
     def _split_text_with_regex(
-        text: str, separator: str, keep_separator: bool
+        self,
+        text: str, 
+        separator: str, 
+        keep_separator: bool
     ) -> List[str]:
         # Now that we have the separator, split the text
         if separator:
