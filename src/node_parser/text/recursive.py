@@ -4,29 +4,30 @@ from typing import Optional, List, Any, Iterable, Callable
 
 from src.bridge.pydantic import Field
 from src.callbacks.callback_manager import CallbackManager, CBEventType, EventPayload
-from src.node_parser.base import MetadataAwareTextSplitter
+from src.node_parser.base import TextSplitter
 from src.constants import DEFAULT_CHUNK_SIZE
+from src.utils.utils import get_tokenizer
 
 SENTENCE_CHUNK_OVERLAP = 200
 
 logger = logging.getLogger(__name__)
 
-class RecursiveCharacterTextSplitter(MetadataAwareTextSplitter):
+class RecursiveCharacterTextSplitter(TextSplitter):
     """Splitting text by recursively look at characters.
 
     Recursively tries to split by different characters to find one
     that works.
     """
 
-    _chunk_size: int = Field(
+    chunk_size: int = Field(
         description="The token chunk size for each chunk.",
         gt=0,
     )
-    _chunk_overlap: int = Field(
+    chunk_overlap: int = Field(
         description="The token overlap of each chunk when splitting.",
         gte=0,
     )
-    _separators: List[str] = Field(
+    separators: List[str] = Field(
         description="Default separator for splitting into words"
     )
     tokenizer: Callable = Field(
@@ -59,17 +60,19 @@ class RecursiveCharacterTextSplitter(MetadataAwareTextSplitter):
                 f"({chunk_size}), should be smaller."
             )
 
-        self._chunk_size = chunk_size
-        self._chunk_overlap = chunk_overlap
-        self._keep_separator = keep_separator
-        self._separators = separators or ["\n\n", "\n", " ", ""]
-        self._is_separator_regex = is_separator_regex
-        self._add_start_index = add_start_index
-        self._strip_whitespace = strip_whitespace
-
-        self._tokenizer = tokenizer
+        separators = separators or ["\n\n", "\n", " ", ""]
+        callback_manager = callback_manager or CallbackManager()
+        tokenizer = tokenizer or get_tokenizer()
 
         super().__init__(
+            chunk_size=chunk_size,
+            chunk_overlap = chunk_overlap,
+            separators=separators,
+            keep_separator = keep_separator,
+            is_separator_regex = is_separator_regex,
+            add_start_index = add_start_index,
+            strip_whitespace = strip_whitespace,
+            tokenizer = tokenizer,
             callback_manager=callback_manager,
             **kwargs
         )
