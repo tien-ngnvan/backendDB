@@ -211,7 +211,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
     
     def _join_docs(self, docs: List[str], separator: str) -> Optional[str]:
         text = separator.join(docs)
-        if self._strip_whitespace:
+        if self.strip_whitespace:
             text = text.strip()
         if text == "":
             return None
