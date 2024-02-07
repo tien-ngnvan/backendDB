@@ -34,6 +34,18 @@ class RecursiveCharacterTextSplitter(TextSplitter):
         description="Default separator for splitting into words"
     )
 
+    is_separator_regex: bool = Field(
+        default=False, description="Whether or not to consider metadata when splitting."
+    )
+    keep_separator: bool = Field(
+        default=False, description="Whether to keep the separator in the chunks"
+    )
+    add_start_index: bool = Field(
+        default=False, description="includes chunk's start index in metadata"
+    )
+    strip_whitespace: bool = Field(
+        default=True, description="strips whitespace from the start and end of every splits"
+    )
     
 
     def __init__(
@@ -98,7 +110,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
         separator = separators[-1]
         new_separators = []
         for i, _s in enumerate(separators):
-            _separator = _s if self._is_separator_regex else re.escape(_s)
+            _separator = _s if self.is_separator_regex else re.escape(_s)
             if _s == "":
                 separator = _s
                 break
@@ -107,14 +119,14 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                 new_separators = separators[i + 1 :]
                 break
 
-        _separator = separator if self._is_separator_regex else re.escape(separator)
-        splits = self._split_text_with_regex(text, _separator, self._keep_separator)
+        _separator = separator if self.is_separator_regex else re.escape(separator)
+        splits = self._split_text_with_regex(text, _separator, self.keep_separator)
 
         # Now go merging things, recursively splitting longer texts.
         _good_splits = []
-        _separator = "" if self._keep_separator else separator
+        _separator = "" if self.keep_separator else separator
         for s in splits:
-            if self._token_size(s) < self._chunk_size:
+            if self._token_size(s) < self.chunk_size:
                 _good_splits.append(s)
             else:
                 if _good_splits:
@@ -132,7 +144,7 @@ class RecursiveCharacterTextSplitter(TextSplitter):
         return final_chunks
 
     def split_text(self, text: str) -> List[str]:
-        return self._split_text(text, self._separators)
+        return self._split_text(text, self.separators)
 
     def _split_text_with_regex(
         text: str, separator: str, keep_separator: bool
@@ -164,12 +176,12 @@ class RecursiveCharacterTextSplitter(TextSplitter):
             _len = self._token_size(d)
             if (
                 total + _len + (separator_len if len(current_doc) > 0 else 0)
-                > self._chunk_size
+                > self.chunk_size
             ):
-                if total > self._chunk_size:
+                if total > self.chunk_size:
                     logger.warning(
                         f"Created a chunk of size {total}, "
-                        f"which is longer than the specified {self._chunk_size}"
+                        f"which is longer than the specified {self.chunk_size}"
                     )
                 if len(current_doc) > 0:
                     doc = self._join_docs(current_doc, separator)
@@ -178,9 +190,9 @@ class RecursiveCharacterTextSplitter(TextSplitter):
                     # Keep on popping if:
                     # - we have a larger chunk than in the chunk overlap
                     # - or if we still have any chunks and the length is long
-                    while total > self._chunk_overlap or (
+                    while total > self.chunk_overlap or (
                         total + _len + (separator_len if len(current_doc) > 0 else 0)
-                        > self._chunk_size
+                        > self.chunk_size
                         and total > 0
                     ):
                         total -= self._token_size(current_doc[0]) + (
@@ -204,4 +216,4 @@ class RecursiveCharacterTextSplitter(TextSplitter):
             return text
 
     def _token_size(self, text: str) -> int:
-        return len(self._tokenizer(text))
+        return len(self.tokenizer(text))
