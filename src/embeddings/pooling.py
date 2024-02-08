@@ -39,9 +39,10 @@ class Pooling(str, Enum):
         raise NotImplementedError(f"Unhandled shape {array.shape}.")
 
     @classmethod
-    def mean_pooling(cls, array: np.ndarray) -> np.ndarray:
+    def mean_pooling(cls, array: np.ndarray, mask: np.ndarray) -> np.ndarray:
         if len(array.shape) == 3:
             return array.mean(axis=1)
         if len(array.shape) == 2:
             return array.mean(axis=0)
         raise NotImplementedError(f"Unhandled shape {array.shape}.")
+    
