@@ -1,3 +1,3 @@
 from .base_embeddings import *
-from .pooling import *
-from .utils import *
+from .pooling import Pooling
+from .huggingface import CrossEncoder
