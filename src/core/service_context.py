@@ -168,9 +168,3 @@ class ServiceContext:
             transformations=transformations,
             callback_manager=callback_manager,
         )
-
-
-    @property
-    def node_parser(self) -> SentenceSplitter:
-        """Get the node parser."""
-        for transform in self.transformations:
