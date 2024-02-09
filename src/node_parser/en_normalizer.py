@@ -41,7 +41,11 @@ class EngNormalizer:
         """
         return self.normalize(text)
     
-    def remove_emoji(string):
+    def remove_emoji(
+        self,
+        string: str,
+        **add_kwargs: Any,
+    ) -> str:
         emoji_pattern = re.compile( 
             "["
             u"\U0001F600-\U0001F64F"  # emoticons
@@ -55,16 +59,28 @@ class EngNormalizer:
         )
         return emoji_pattern.sub(r"", string)
 
-    def remove_urls(text):
+    def remove_urls(
+        self,
+        text: str,
+        **add_kwargs: Any,        
+    ) -> str:
         url_pattern = re.compile(r"https?://\S+|www\.\S+")
         return url_pattern.sub(r"", text)
     
-    def remove_html(text):
+    def remove_html(
+        self,
+        text: str,
+        **add_kwargs: Any,
+    ) -> str:
         #Function for removing html tags
         from bs4 import BeautifulSoup
         return BeautifulSoup(text, "lxml").text
     
-    def remove_emoticon(text):
+    def remove_emoticon(
+        self,
+        text: str,
+        **add_kwargs: Any,
+    ) -> str:
         """
         Examples: 'Hello :-)'
         """
