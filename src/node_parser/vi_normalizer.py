@@ -31,26 +31,18 @@ class ViNormalizer:
         text: str,
         **add_kwargs: Any,
     ) -> str:
-        
+        """
+        features:
+        - remove icon, (có sẵn)
+        - remove bullet (research)
+        - html tags:  </p> (research)
+        - remove multiple space: strip() (có sẵn)
+        """
         # from underthesea import text_normalize
         norm_text = text
         for norm_fun in self._normalize_fns:
             norm_text = norm_fun(norm_text)
         return norm_text
-        # return text_normalize(text)
-        """Add nodes with embedding to vector store."""
-        #TODO:
-        """
-        (1) copy cái emotion -> gán qua đây
-        (2) features:
-            - remove icon, (có sẵn)
-            - remove bullet (research)
-            - html tags:  </p> (research)
-            - remove multiple space: strip() (có sẵn)
-        (3) specify type:
-            - chỉnh lại bên en
-            - format bên vi: chỉnh init, chỉnh type input output của def
-        """
 
     async def async_normalize(
         self,
@@ -178,9 +170,3 @@ class ViNormalizer:
         "       This string has   extra   spaces in the middle." -> This string has extra spaces in the middle.
         """
         return re.sub(r"\s+", " ", text).strip() 
-
-sample_text = "Hello :-)"
-normal = ViNormalizer()
-a = normal.remove_emoticon(text=sample_text)
-print(a)
-
