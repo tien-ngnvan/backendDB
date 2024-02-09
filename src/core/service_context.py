@@ -168,3 +168,22 @@ class ServiceContext:
             transformations=transformations,
             callback_manager=callback_manager,
         )
+
+
+    @property
+    def node_parser(self) -> SentenceSplitter:
+        """Get the node parser."""
+        for transform in self.transformations:
+            if isinstance(transform, SentenceSplitter):
+                return transform
+        raise ValueError("No node parser found.")
+
+    def to_dict(self) -> dict:
+        """Convert service context to dict."""
+        embed_model_dict = self.embed_model.to_dict()
+        tranform_list_dict = [x.to_dict() for x in self.transformations]
+
+        return ServiceContextData(
+            embed_model=embed_model_dict,
+            transformations=tranform_list_dict,
+        ).dict()
