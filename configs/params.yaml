@@ -1,10 +1,6 @@
 MilvusParams:
   collection_name: MilvusCollection
   embedding_dim: 384
-  embedding_field: embedding
-  primary_field: doc_id
-  text_field: null
-  consistency_level: null
   overwrite: True
   search_params: 
     metric_type: COSINE

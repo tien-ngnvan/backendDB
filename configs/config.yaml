@@ -9,4 +9,7 @@ milvus_config:
   address: null
   uri: null
   user: null
-
+  embedding_field: embedding
+  primary_field: id
+  text_field: null
+  consistency_level: null
