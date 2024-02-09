@@ -13,3 +13,6 @@ milvus_config:
   primary_field: id
   text_field: null
   consistency_level: null
+
+node_parser_config: 
+  name: null

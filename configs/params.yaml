@@ -41,3 +41,15 @@ IndexRetrieveParams:
   insert_batch_size: 2048
   use_async: False
   show_progress: False
+
+NodeParserParams:
+  model_name_tokenizer: BAAI/bge-small-en
+  # fpr sentence splitter 
+  splitter_mode: sentence
+  separator: " "
+  chunk_size: 256
+  chunk_overlap: 20
+  paragraph_separator: \n\n\n
+  secondary_chunking_regex: "[^,.;。？！]+[,.;。？！]?"
+  # for token splitter
+  backup_separators: null
