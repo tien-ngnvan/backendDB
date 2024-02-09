@@ -39,11 +39,11 @@ class DatabaseEngine(BaseEngine):
         self._vector_store: VectorStore = self._storage_context.vector_stores
         super().__init__(callback_manager=callback_manager)
 
-    def run_engine(self):
-        return super().run_engine()
+    def run_engine(self, nodes: Sequence[BaseNode], show_progress: bool = False) -> None:
+        return self._add_nodes_to_index(nodes=nodes, show_progress=show_progress)    
     
-    def arun_engine(self):
-        return super().arun_engine()
+    def arun_engine(self, nodes: Sequence[BaseNode], show_progress: bool = False):
+        return self._async_add_nodes_to_index(nodes=nodes, show_progress=show_progress) 
     
     def is_validate_nodes(
         self,
