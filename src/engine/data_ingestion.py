@@ -71,14 +71,18 @@ class DatabaseEngine(BaseEngine):
             return
 
         for nodes_batch in iter_batch(nodes, self._insert_batch_size):
+            # validate nodes
+            nodes_batch = self.is_validate_nodes(nodes_batch)
+            # get embeddings
             nodes_batch = self._get_node_with_embedding(nodes_batch, show_progress)
+            # insert to vector_store
             new_ids = self._vector_store.add(nodes_batch, **insert_kwargs)
 
             print("self._vector_store.stores_text: ", self._vector_store.stores_text)
-
+            
+            # NOTE: if the vector store doesn't store text,
+            # we need to add the nodes to document store
             if not self._vector_store.stores_text:
-                # NOTE: if the vector store doesn't store text,
-                # we need to add the nodes to document store
                 print("add the nodes to the document store")
                 for node, _ in zip(nodes_batch, new_ids):
                     # NOTE: remove embedding from node to avoid duplication
