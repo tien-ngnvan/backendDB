@@ -29,15 +29,14 @@ class DatabaseEngine(BaseEngine):
         insert_batch_size: int,
         callback_manager: Optional[CallbackManager],
         splitter: NodeParser,
-        vector_store: VectorStore,
         service_context: ServiceContext,
         storage_context: StorageContext
     ):
         self._insert_batch_size=insert_batch_size
         self._splitter = splitter
-        self._vector_store = vector_store
         self._service_context = service_context
         self._storage_context = storage_context
+        self._vector_store: VectorStore = self._storage_context.vector_stores
         super().__init__(callback_manager=callback_manager)
 
     def run_engine(self):
