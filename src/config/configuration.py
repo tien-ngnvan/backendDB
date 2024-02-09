@@ -9,10 +9,8 @@ from .schema import (
     MilvusArguments,
     NodeParserArguments,
     NodeParserConfig,
-    LlmParams,
     EmbeddingsParams,
     IndexRetrieveParams,
-    ResponseParams
 )
 
 class ConfigurationManager: 
@@ -74,32 +72,7 @@ class ConfigurationManager:
             backup_separators=params.backup_separators,
         )
         return node_parser_params
-            
-
-    def get_llm_params(self) -> LlmParams:
-        params = self.param.LlmParams
-        llm_params = LlmParams(
-            context_window=params.context_window,
-            max_new_tokens=params.max_new_tokens,
-            model_name=params.model_name,
-            tokenizer_name=params.tokenizer_name,
-            device_map=params.device_map,
-            top_k=params.top_k,
-            top_p=params.top_p,
-            temperature=params.temperature,
-            length_penalty=params.length_penalty,
-            repetition_penalty=params.repetition_penalty,
-            num_beams=params.num_beams,
-            do_sample=params.do_sample,
-            pelnaty_alpha=params.pelnaty_alpha,
-            use_cache=params.use_cache,
-            num_return_sequences=params.num_return_sequences,
-            pad_token_id=params.pad_token_id,
-            bos_token_id=params.bos_token_id,
-            eos_token_id=params.eos_token_id,
-        )
-        return llm_params
-    
+     
     def get_embed_params(self) -> EmbeddingsParams:
         params = self.param.embeddings_params
         embed_params = EmbeddingsParams(
@@ -134,12 +107,3 @@ class ConfigurationManager:
         )
         return embed_params
     
-    def get_response_params(self) -> ResponseParams:
-        params = self.param.ResponseParams
-        response_params = ResponseParams(
-            verbose=params.verbose,
-            response_mode=params.response_mode,
-            use_async=params.use_async,
-            streaming=params.streaming,
-        )
-        return response_params
