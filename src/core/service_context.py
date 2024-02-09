@@ -92,7 +92,7 @@ class ServiceContext:
         # NOTE: the embed_model isn't used in all indices
         # NOTE: embed model should be a transformation, but the way the service
         # context works, we can't put in there yet.
-        embed_model = resolve_embed_model(embed_model)
+        embed_model = embed_model
         embed_model.callback_manager = callback_manager
 
         if text_splitter is not None and node_parser is not None:
