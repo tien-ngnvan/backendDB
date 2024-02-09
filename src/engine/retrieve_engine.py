@@ -10,11 +10,11 @@ from src.node.base_node import NodeWithScore
 from src.retriever.types import QueryBundle, QueryType
 from src.retriever.base_retriver import BaseRetriever
 
-from .base import BaseQueryEngine
+from .base import BaseEngine
 
 logger = logging.getLogger(__name__)
 
-class RetriverEngine(BaseQueryEngine):
+class RetriverEngine(BaseEngine):
     """Base query engine."""
 
     def __init__(
@@ -29,19 +29,13 @@ class RetriverEngine(BaseQueryEngine):
             callback_manager=callback_manager
         )
 
-    def query(self, str_or_query_bundle: QueryType) -> Any:
-        with self.callback_manager.as_trace("query"):
-            if isinstance(str_or_query_bundle, str):
-                str_or_query_bundle = QueryBundle(str_or_query_bundle)
-            return self._query(str_or_query_bundle)
+    def run_engine(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+        return self.search(query_bundle=query_bundle)
+    
+    async def arun_engine(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+        return await self.asearch(query_bundle=query_bundle)
 
-    async def aquery(self, str_or_query_bundle: QueryType) -> Any:
-        with self.callback_manager.as_trace("query"):
-            if isinstance(str_or_query_bundle, str):
-                str_or_query_bundle = QueryBundle(str_or_query_bundle)
-            return await self._aquery(str_or_query_bundle)
-
-    def retrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+    def search(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         nodes = self.retriever.retrieve(query_bundle)
         nodes = self._rerank_nodes(
             nodes=nodes,
@@ -49,21 +43,13 @@ class RetriverEngine(BaseQueryEngine):
         )
         return nodes
 
-    async def aretrieve(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+    async def asearch(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         nodes = await self.retriever.aretrieve(query_bundle)
         nodes = self._rerank_nodes(
             nodes=nodes,
             query_bundle=query_bundle
         )
         return nodes
-
-    def _query(self, query_bundle: QueryBundle) -> Any:
-        """Answer a query."""
-        return "Not supported"
-
-    async def _aquery(self, query_bundle: QueryBundle) -> Any:
-        """Answer a query."""
-        return "Not supported"
 
     def _rerank_nodes(
         self, 
