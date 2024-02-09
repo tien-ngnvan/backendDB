@@ -36,6 +36,10 @@ class ConfigurationManager:
             address= configs.address,
             uri= configs.uri,
             user= configs.user,
+            consistency_level=configs.consistency_level,
+            primary_field=configs.primary_field,
+            text_field=configs.text_field,
+            embedding_field=configs.embedding_field,
         )
         return milvus_config
     
@@ -43,13 +47,9 @@ class ConfigurationManager:
         params = self.param.MilvusParams
         milvus_params = MilvusArguments(
             collection_name=params.collection_name,
-            consistency_level=params.consistency_level,
             index_params=params.index_params,
             search_params=params.search_params,
             overwrite=params.overwrite,
-            primary_field=params.primary_field,
-            text_field=params.text_field,
-            embedding_field=params.embedding_field,
             embedding_dim=params.embedding_dim,
         )
         return milvus_params
