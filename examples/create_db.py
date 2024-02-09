@@ -8,6 +8,7 @@ from src.config.configuration import ConfigurationManager
 from src.core.service_context import ServiceContext
 from src.callbacks import CallbackManager
 from src.node_parser.text.sentence import SentenceSplitter
+from src.embeddings.huggingface import CrossEncoder
 
 
 # tạo database 
@@ -18,7 +19,7 @@ import glob
 
 startTime_load = int(round(time.time() * 1000))
 
-pdf_files = glob.glob("/home/hungnq/hungnq_2/rag_pdf/rag_pdf_services/data/*.docx")
+pdf_files = glob.glob("/home/hungnq/hungnq_2/backend_db/backendDB/data/*.docx")
 print("pdf_files: ", pdf_files)
 reader = DirectoryReader(
     input_files=pdf_files
@@ -44,10 +45,8 @@ node_parser_config = manager.get_node_parser_config()
 node_parser_params = manager.get_node_parser_params()
 milvus_config = manager.get_milvus_config()
 milvus_params = manager.get_milvus_params()
-llm_params = manager.get_llm_params()
 embed_params = manager.get_embed_params()
 index_retriver_params = manager.get_index_retriever_params()
-response_params = manager.get_response_params()
 
 #callback manager
 callback_manager = CallbackManager()
@@ -60,24 +59,20 @@ node_parser = SentenceSplitter(
     chunk_size=node_parser_params.chunk_size,
     chunk_overlap=node_parser_params.chunk_overlap,
     tokenizer=tokenizer.encode,
-    pasrcraph_separator="\n\n\n",
+    paragraph_separator="\n\n\n",
     secondary_chunking_regex=node_parser_params.secondary_chunking_regex,
     callback_manager=callback_manager,
 )
 
 # emb_model
-emb_model = HuggingFaceEmbedding(
-    model_name=embed_params.model_name,
-    tokenizer_name=embed_params.tokenizer_name,
-    pooling=embed_params.pooling,
-    max_length=embed_params.max_length,
-    normalize=embed_params.normalize,
-    embed_batch_size=embed_params.embedding_batch_size,
-    cache_folder=embed_params.cache_folder,
-    trust_remote_code=embed_params.trust_remote_code,
+emb_model = CrossEncoder(
+    qry_model_name="pythera/mbert-retrieve-qry-base",
+    psg_model_name="pythera/mbert-retrieve-ctx-base",
+    token="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",
+    device=[0],
 )
 
-service_context = ServiceContext(
+service_context = ServiceContext.from_defaults(
     embed_model=emb_model,
     node_parser=node_parser,
     callback_manager=callback_manager,
