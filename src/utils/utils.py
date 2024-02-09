@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional, Iterable
+from typing import List, Dict, Optional, Iterable, Generator
 
 # Sample text from llama_index's readme
 SAMPLE_TEXT = """
@@ -181,3 +181,18 @@ def get_tokenizer() -> Callable[[str], List]:
 
     assert global_tokenizer is not None
     return global_tokenizer
+
+from itertools import islice
+
+def iter_batch(iterable: Union[Iterable, Generator], size: int) -> Iterable:
+    """Iterate over an iterable in batches.
+
+    >>> list(iter_batch([1,2,3,4,5], 3))
+    [[1, 2, 3], [4, 5]]
+    """
+    source_iter = iter(iterable)
+    while source_iter:
+        b = list(islice(source_iter, size))
+        if len(b) == 0:
+            break
+        yield b
