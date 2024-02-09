@@ -152,9 +152,13 @@ class DatabaseEngine(BaseEngine):
             return
 
         for nodes_batch in iter_batch(nodes, self._insert_batch_size):
+            # validate nodes
+            nodes_batch = self.is_validate_nodes(nodes_batch)
+            # get embedddings
             nodes_batch = await self._aget_node_with_embedding(
                 nodes_batch, show_progress
             )
+            # add to vector store
             new_ids = await self._vector_store.async_add(nodes_batch, **insert_kwargs)
 
             # if the vector store doesn't store text, we need to add the nodes to the
