@@ -5,7 +5,7 @@ from typing import List, Optional
 from src.bridge.pydantic import BaseModel
 from src.callbacks import CallbackManager
 from src.embeddings import BaseEmbedding
-from src.embeddings.utils import EmbedType, resolve_embed_model
+from src.embeddings.utils import EmbedType
 
 from src.node_parser.text.sentence import SentenceSplitter, DEFAULT_CHUNK_SIZE,SENTENCE_CHUNK_OVERLAP
 from src.node_parser import TextSplitter
@@ -136,7 +136,7 @@ class ServiceContext:
         # default to using the embed model passed from the service context
         if embed_model == "default":
             embed_model = service_context.embed_model
-        embed_model = resolve_embed_model(embed_model)
+        embed_model = embed_model 
         embed_model.callback_manager = callback_manager
 
         transformations = transformations or []
