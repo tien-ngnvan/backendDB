@@ -23,5 +23,5 @@ class BaseEngine:
         pass
 
     @abstractmethod
-    def arun_engine(self):
+    async def arun_engine(self):
         pass
