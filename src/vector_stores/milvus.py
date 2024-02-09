@@ -4,7 +4,7 @@ An index that is built within Milvus.
 
 """
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 from src.node.base_node import BaseNode, TextNode
 from src.vector_stores import (
@@ -14,12 +14,16 @@ from src.vector_stores import (
     VectorStoreQueryMode,
     VectorStoreQueryResult,
 )
+from src.config.schema import MilvusArguments, MilvusConfig
 from .utils import (
     DEFAULT_DOC_ID_KEY,
     DEFAULT_EMBEDDING_KEY,
     metadata_dict_to_node,
     node_to_metadata_dict,
 )
+
+if TYPE_CHECKING:
+    from pymilvus import MilvusClient
 
 logger = logging.getLogger(__name__)
 
@@ -87,19 +91,8 @@ class MilvusVectorStore(VectorStore):
 
     def __init__(
         self,
-        uri: str = "http://localhost:19530",
-        token: str = "",
-        collection_name: str = "collection",
-        dim: Optional[int] = None,
-        embedding_field: str = DEFAULT_EMBEDDING_KEY,
-        doc_id_field: str = DEFAULT_DOC_ID_KEY,
-        similarity_metric: str = "IP",
-        consistency_level: str = "Strong",
-        overwrite: bool = False,
-        text_key: Optional[str] = None,
-        index_config: Optional[dict] = None,
-        search_config: Optional[dict] = None,
-        **kwargs: Any,
+        config: MilvusConfig,
+        params: MilvusArguments,
     ) -> None:
         """Init params."""
         import_err_msg = (
@@ -110,47 +103,32 @@ class MilvusVectorStore(VectorStore):
         except ImportError:
             raise ImportError(import_err_msg)
 
-        from pymilvus import Collection, MilvusClient
+        from pymilvus import Collection
 
-        self.collection_name = collection_name
-        self.dim = dim
-        self.embedding_field = embedding_field
-        self.doc_id_field = doc_id_field
-        self.consistency_level = consistency_level
-        self.overwrite = overwrite
-        self.text_key = text_key
-        self.index_config: Dict[str, Any] = index_config.copy() if index_config else {}
-        # Note: The search configuration is set at construction to avoid having
-        # to change the API for usage of the vector store (i.e. to pass the
-        # search config along with the rest of the query).
-        self.search_config: Dict[str, Any] = (
-            search_config.copy() if search_config else {}
-        )
+        self.config = config
+        self.params = params
+
+        self.embedding_field = config.embedding_field
+        self.doc_id_field = config.primary_field
+        self.text_field = config.text_field
+        self.consistency_level = config.consistency_level
+        self.dim = params.embedding_dim
+        self.collection_name = params.collection_name
+        self.overwrite = params.overwrite
+        
 
         # Select the similarity metric
-        if similarity_metric.lower() in ("ip"):
-            self.similarity_metric = "IP"
-        elif similarity_metric.lower() in ("l2", "euclidean"):
-            self.similarity_metric = "L2"
-        elif similarity_metric.lower() in ("hamming"):
-          self.similarity_metric = "HAMMING"
-        elif similarity_metric.lower() in ("jaccard"):
-          self.similarity_metric = "JACCARD"
-        elif similarity_metric.lower() in ("cosine"):
-          self.similarity_metric = "COSINE"
+        self.similarity_metric = self.params.search_params.get("metric_type", None)
 
         # Connect to Milvus instance
-        self.milvusclient = MilvusClient(
-            uri=uri,
-            token=token,
-        )
+        self.milvusclient = self.connect_client()
 
         # Delete previous collection if overwriting
-        if self.overwrite and self.collection_name in self.client.list_collections():
+        if self.overwrite and self.collection_name in self.milvusclient.list_collections():
             self.milvusclient.drop_collection(self.collection_name)
 
         # Create the collection if it does not exist
-        if self.collection_name not in self.client.list_collections():
+        if self.collection_name not in self.milvusclient.list_collections():
             if self.dim is None:
                 raise ValueError("Dim argument required for collection creation.")
             self.milvusclient.create_collection(
@@ -161,15 +139,24 @@ class MilvusVectorStore(VectorStore):
                 id_type="string",
                 metric_type=self.similarity_metric,
                 max_length=65_535,
-                consistency_level=self.consistency_level,
             )
-
+        
         self.collection = Collection(
             self.collection_name, using=self.milvusclient._using
         )
-        self._create_index_if_required()
-
+        self._create_index_if_required(force=True)
         logger.debug(f"Successfully created a new collection: {self.collection_name}")
+
+    def connect_client(self) -> "MilvusClient":
+        from pymilvus import MilvusClient
+        # Order of use is host/port, uri, address
+        if self.config.uri is not None:
+            return MilvusClient(self.config.uri)
+        elif self.config.host is not None and self.config.port is not None:
+            uri = f"http://{self.config.host}:{self.config.port}"
+            return MilvusClient(uri=uri)
+        raise Exception("Cannot connect milvus database")
+
 
     @property
     def client(self) -> Any:
