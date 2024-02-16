@@ -18,6 +18,7 @@ from src.utils.files import concat_dirs
 from src.vector_stores.base_vector import VectorStore
 
 DEFAULT_PERSIST_DIR = "./storage"
+DEFAULT_VECTOR_STORE = "default"
 
 
 @dataclass
@@ -39,6 +40,7 @@ class StorageContext:
     def from_defaults(
         cls,
         docstore: Optional[BaseDocumentStore] = None,
+        vector_store: Optional[VectorStore] = None,
         persist_dir: Optional[str] = None,
         fs: Optional[fsspec.AbstractFileSystem] = None,
     ) -> "StorageContext":
@@ -46,23 +48,24 @@ class StorageContext:
 
         Args:
             docstore (Optional[BaseDocumentStore]): document store
-            index_store (Optional[BaseIndexStore]): index store
             vector_store (Optional[VectorStore]): vector store
-            graph_store (Optional[GraphStore]): graph store
-            image_store (Optional[VectorStore]): image store
 
         """
         if persist_dir is None:
             docstore = docstore or SimpleDocumentStore()
-
+            if vector_store:
+                vector_stores = {DEFAULT_VECTOR_STORE: vector_store}
         
         else:
             docstore = docstore or SimpleDocumentStore.from_persist_dir(
                 persist_dir, fs=fs
             )
+            if vector_store:
+                vector_stores = {DEFAULT_VECTOR_STORE: vector_store}
 
         return cls(
             docstore=docstore,
+            vector_stores=vector_stores,
         )
 
     def persist(
