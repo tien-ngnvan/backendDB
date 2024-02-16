@@ -18,7 +18,10 @@ from src.utils.files import concat_dirs
 from src.vector_stores.base_vector import VectorStore
 
 DEFAULT_PERSIST_DIR = "./storage"
+
 DEFAULT_VECTOR_STORE = "default"
+VECTOR_STORE_FNAME = "vector_store.json"
+NAMESPACE_SEP = "__"
 
 
 @dataclass
@@ -72,6 +75,7 @@ class StorageContext:
         self,
         persist_dir: Union[str, os.PathLike] = DEFAULT_PERSIST_DIR,
         docstore_fname: str = DOCSTORE_FNAME,
+        vector_store_fname: str = VECTOR_STORE_FNAME,
         fs: Optional[fsspec.AbstractFileSystem] = None,
     ) -> None:
         """Persist the storage context.
@@ -87,6 +91,21 @@ class StorageContext:
             docstore_path = str(persist_dir / docstore_fname)
 
         self.docstore.persist(persist_path=docstore_path, fs=fs)
+
+        # save each vector store under it's namespace
+        for vector_store_name, vector_store in self.vector_stores.items():
+            if fs is not None:
+                vector_store_path = concat_dirs(
+                    str(persist_dir),
+                    f"{vector_store_name}{NAMESPACE_SEP}{vector_store_fname}",
+                )
+            else:
+                vector_store_path = str(
+                    Path(persist_dir)
+                    / f"{vector_store_name}{NAMESPACE_SEP}{vector_store_fname}"
+                )
+
+            vector_store.persist(persist_path=vector_store_path, fs=fs)
     
 
     def to_dict(self) -> dict:
