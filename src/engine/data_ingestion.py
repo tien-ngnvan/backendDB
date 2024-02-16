@@ -57,7 +57,7 @@ class DatabaseEngine(BaseEngine):
                     "Cannot build index from nodes with no content. "
                     "Please ensure all nodes have content."
                 )
-        return True
+        return nodes
     
     def _add_nodes_to_index(
         self,
@@ -192,6 +192,7 @@ class DatabaseEngine(BaseEngine):
 
         texts_to_embed = []
         ids_to_embed = []
+        print(nodes)
         for node in nodes:
             if node.embedding is None:
                 ids_to_embed.append(node.node_id)
