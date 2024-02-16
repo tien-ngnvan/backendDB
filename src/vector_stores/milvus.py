@@ -144,7 +144,7 @@ class MilvusVectorStore(VectorStore):
         self.collection = Collection(
             self.collection_name, using=self.milvusclient._using
         )
-        self._create_index_if_required(force=True)
+        # self._create_index_if_required(force=Fa)
         logger.debug(f"Successfully created a new collection: {self.collection_name}")
 
     def connect_client(self) -> "MilvusClient":
@@ -267,7 +267,7 @@ class MilvusVectorStore(VectorStore):
             filter=string_expr,
             limit=query.similarity_top_k,
             output_fields=output_fields,
-            search_params=self.search_config,
+            search_params=self.params.search_params,
         )
 
         logger.debug(
@@ -318,7 +318,7 @@ class MilvusVectorStore(VectorStore):
         if (self.collection.has_index() and self.overwrite) or force:
             self.collection.drop_index()
         # set params
-        base_params: Dict[str, Any] = self.index_config.copy()
+        base_params: Dict[str, Any] = self.params.index_params
         index_type: str = base_params.pop("index_type", "FLAT")
         index_params: Dict[str, Union[str, Dict[str, Any]]] = {
             "params": base_params,
