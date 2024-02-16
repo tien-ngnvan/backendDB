@@ -38,8 +38,8 @@ class ViNormalizer:
         - html tags:  </p> (research)
         - remove multiple space: strip() (có sẵn)
         """
-        # from underthesea import text_normalize
-        norm_text = text
+        from underthesea import text_normalize
+        norm_text = text_normalize(text)
         for norm_fun in self._normalize_fns:
             norm_text = norm_fun(norm_text)
         return norm_text
