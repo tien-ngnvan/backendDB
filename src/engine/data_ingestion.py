@@ -36,7 +36,7 @@ class DatabaseEngine(BaseEngine):
         self._splitter = splitter
         self._service_context = service_context
         self._storage_context = storage_context
-        self._vector_store: VectorStore = self._storage_context.vector_stores
+        self._vector_store: VectorStore = self._storage_context.vector_store
         super().__init__(callback_manager=callback_manager)
 
     def run_engine(self, nodes: Sequence[BaseNode], show_progress: bool = False) -> None:

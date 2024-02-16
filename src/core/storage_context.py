@@ -131,3 +131,8 @@ class StorageContext:
         return cls(
             docstore=docstore,
         )
+
+    @property
+    def vector_store(self) -> VectorStore:
+        """Backwrds compatibility for vector_store property."""
+        return self.vector_stores[DEFAULT_VECTOR_STORE]
