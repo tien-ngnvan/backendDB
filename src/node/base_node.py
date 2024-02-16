@@ -76,6 +76,14 @@ class BaseNode(BaseModel):
     @property
     def node_id(self):
         return self.id_
+    
+    @property
+    def ref_doc_id(self) -> Optional[str]:
+        """Deprecated: Get ref doc id."""
+        source_node = self.source_node
+        if source_node is None:
+            return None
+        return source_node.node_id
 
     @property
     def source_node(self) -> Optional[RelatedNodeInfo]:
