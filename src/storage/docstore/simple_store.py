@@ -32,7 +32,7 @@ class SimpleDocumentStore(BaseDocumentStore):
 
     def __init__(
         self,
-        kvstore: SimpleKVStore,
+        kvstore: Optional[SimpleKVStore] = None,
         namespace: Optional[str] = None,
         batch_size: int = DEFAULT_BATCH_SIZE,
     ) -> None:
