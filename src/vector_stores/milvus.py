@@ -144,7 +144,7 @@ class MilvusVectorStore(VectorStore):
         self.collection = Collection(
             self.collection_name, using=self.milvusclient._using
         )
-        # self._create_index_if_required(force=Fa)
+        self._create_index_if_required(force=True)
         logger.debug(f"Successfully created a new collection: {self.collection_name}")
 
     def connect_client(self) -> "MilvusClient":
@@ -306,26 +306,24 @@ class MilvusVectorStore(VectorStore):
         return VectorStoreQueryResult(nodes=nodes, similarities=similarities, ids=ids)
 
     def _create_index_if_required(self, force: bool = False) -> None:
-        # This helper method is introduced to allow the index to be created
-        # both in the constructor and in the `add` method. The `force` flag is
-        # provided to ensure that the index is created in the constructor even
-        # if self.overwrite is false. In the `add` method, the index is
-        # recreated only if self.overwrite is true.
+        """
+        This method is introduced to allow the index to be created
+        both in the constructor and in the `add` method. 
+        (1) The `force` flag is provided to ensure that the index is 
+        created in the constructor evenif self.overwrite is false. 
+        (2) In the `add` method, the index is re-created only 
+        if self.overwrite is true.
+        """
 
-        # release out of memory first
-        self.collection.release()
-        # drop index of that field before build new overwrite index
         if (self.collection.has_index() and self.overwrite) or force:
+            # release out of memory first
+            self.collection.release()
+            # drop index of that field before build new overwrite index
             self.collection.drop_index()
-        # set params
-        base_params: Dict[str, Any] = self.params.index_params
-        index_type: str = base_params.pop("index_type", "FLAT")
-        index_params: Dict[str, Union[str, Dict[str, Any]]] = {
-            "params": base_params,
-            "metric_type": self.similarity_metric,
-            "index_type": index_type,
-        }
-        self.collection.create_index(
-            self.embedding_field, index_params=index_params
-        )
-        print("Create index succesfully")
+            # set params
+            index_params: Dict[str, Union[str, Dict[str, Any]]] = self.params.index_params
+            self.collection.create_index(
+                self.embedding_field, index_params=index_params
+            )
+            print("Create index succesfully")
+            self.collection.load()
