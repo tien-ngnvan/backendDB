@@ -37,7 +37,7 @@ class SimpleDocumentStore(BaseDocumentStore):
         batch_size: int = DEFAULT_BATCH_SIZE,
     ) -> None:
         """Init a SimpleDocumentStore."""
-        self._kvstore = kvstore
+        self._kvstore = kvstore or SimpleKVStore()
         self._namespace = namespace or DEFAULT_NAMESPACE
         self._node_collection = f"{self._namespace}/data"
         self._ref_doc_collection = f"{self._namespace}/ref_doc_info"
