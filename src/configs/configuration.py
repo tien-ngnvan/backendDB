@@ -1,109 +1,130 @@
-from pathlib import Path
+from omegaconf import DictConfig
+
 from src.constants import *
 from src.utils.files import (
-    read_yaml, 
     create_directories
 )
 from .schema import (
+    OtherConfig,
     MilvusConfig,
-    MilvusArguments,
-    NodeParserArguments,
-    NodeParserConfig,
-    EmbeddingsParams,
-    IndexRetrieveParams,
+    CassandraConfig,
+    SentenceSplitterConfig,
+    RecursiveSplitterConfig,
+    SbertConfig,
+    CrossEmbeddingConfig,
 )
 
 class ConfigurationManager: 
     def __init__(
-                self, 
-                config_filepath: Path = CONFIG_FILE_PATH, 
-                param_filepath: Path = PARAMS_FILE_PATH
-                ) -> None:
-        self.config = read_yaml(config_filepath)
-        self.param = read_yaml(param_filepath)
-
-        create_directories([self.config.artifacts_root])
+        self, 
+        config: DictConfig, 
+    ) -> None:
+        self.config = config
+        self.other_config = self.get_orther_config()
+        
+        create_directories([self.other_config.artifacts_root])
     
     def get_milvus_config(self) -> MilvusConfig: 
-        """create instace for data ingestion config"""
-        configs = self.config.milvus_config
-
+        """create instace for vector store config"""
         milvus_config = MilvusConfig(
-            host= configs.host,
-            port= configs.port,
-            address= configs.address,
-            uri= configs.uri,
-            user= configs.user,
-            consistency_level=configs.consistency_level,
-            primary_field=configs.primary_field,
-            text_field=configs.text_field,
-            embedding_field=configs.embedding_field,
+            vectorstore_name= self.config.vectorstore_name,
+            embedding_dim=self.config.embedding_dim,
+            host= self.config.host,
+            port= self.config.port,
+            address= self.config.address,
+            uri= self.config.uri,
+            user= self.config.user,
+            consistency_level=self.config.consistency_level,
+            primary_field=self.config.primary_field,
+            text_field=self.config.text_field,
+            embedding_field=self.config.embedding_field,
+            collection_name=self.config.collection_name,
+            index_params=self.config.index_params,
+            search_params=self.config.search_params,
+            overwrite=self.config.overwrite,
         )
         return milvus_config
     
-    def get_milvus_params(self) -> MilvusArguments:
-        params = self.param.MilvusParams
-        milvus_params = MilvusArguments(
-            collection_name=params.collection_name,
-            index_params=params.index_params,
-            search_params=params.search_params,
-            overwrite=params.overwrite,
-            embedding_dim=params.embedding_dim,
+    def get_postgres_config(self) -> CassandraConfig: 
+        """create instace for vector store config"""
+        cassandra_config = CassandraConfig(
+            vectorstore_name= self.config.vectorstore_name,
+            embedding_dim= self.config.embedding_dim,
+            table= self.config.table,
+            embedding_dimension= self.config.embedding_dimension,
+            session= self.config.session,
+            keyspace= self.config.keyspace,
+            ttl_seconds= self.config.ttl_seconds,
         )
-        return milvus_params
+        return cassandra_config
     
-    def get_node_parser_config(self) -> NodeParserConfig: 
-        config = self.config.node_parser_config
-        node_parser_config = NodeParserConfig(
-            name=config.name
+    
+    def get_sentence_splitter_config(self) -> SentenceSplitterConfig: 
+        """create instace for splitter config"""
+        sentence_splitter_config = SentenceSplitterConfig(
+            splitter_mode= self.config.splitter_mode,
+            model_name_tokenizer= self.config.model_name_tokenizer,
+            separator= self.config.separator,
+            chunk_size= self.config.chunk_size,
+            chunk_overlap= self.config.chunk_overlap,
+            paragraph_separator= self.config.paragraph_separator,
+            secondary_chunking_regex= self.config.secondary_chunking_regex,
         )
-        return node_parser_config
+        return sentence_splitter_config
 
-    def get_node_parser_params(self) -> NodeParserArguments: 
-        params = self.param.NodeParserParams
-        node_parser_params = NodeParserArguments(
-            model_name_tokenizer=params.model_name_tokenizer,
-            splitter_mode=params.splitter_mode,
-            separator=params.separator,
-            chunk_size=params.chunk_size,
-            chunk_overlap=params.chunk_overlap,
-            paragraph_separator=params.paragraph_separator,
-            secondary_chunking_regex=params.secondary_chunking_regex,
-            backup_separators=params.backup_separators,
+    def get_recursive_splitter_config(self) -> RecursiveSplitterConfig: 
+        """create instace for splitter config"""
+        recursive_splitter_config = RecursiveSplitterConfig(
+            splitter_mode= self.config.splitter_mode,
+            model_name_tokenizer= self.config.model_name_tokenizer,
+            separator= self.config.separator,
+            chunk_size= self.config.chunk_size,
+            chunk_overlap= self.config.chunk_overlap,
+            backup_separators= self.config.backup_separators,
         )
-        return node_parser_params
+        return recursive_splitter_config
      
-    def get_embed_params(self) -> EmbeddingsParams:
-        params = self.param.embeddings_params
-        embed_params = EmbeddingsParams(
-            model_name= params.model_name,
-            tokenizer_name= params.tokenizer_name,
-            pooling= params.pooling,
-            max_length= params.max_length,
-            normalize= params.normalize,
-            embedding_batch_size= params.embedding_batch_size,
-            cache_folder= params.cache_folder,
-            trust_remote_code= params.trust_remote_code,
+    def get_cross_embed_config(self) -> CrossEmbeddingConfig:
+        """create instace for cross embedding config"""
+        embed_config = CrossEmbeddingConfig(
+            qry_model_name= self.config.qry_model_name,
+            psg_model_name= self.config.psg_model_name,
+            token= self.config.token,
+            proxies= self.config.proxies,
+            methods= self.config.methods,
+            device= self.config.device,
+            embedding_batch_size= self.config.embedding_batch_size,
+            pooling= self.config.pooling,
+            max_length= self.config.max_length,
+            normalize= self.config.normalize,
         )
-        return embed_params
+        return embed_config
 
-    def get_index_retriever_params(self) -> IndexRetrieveParams:
-        params = self.param.IndexRetrieveParams
-        embed_params = IndexRetrieveParams(
-            index_type=params.index_type,
-            similarity_top_k=params.similarity_top_k,
-            sparse_top_k=params.sparse_top_k,
-            alpha=params.alpha,
-            list_query_mode=params.list_query_mode,
-            keyword_table_mode=params.keyword_table_mode,
-            max_keywords_per_chunk=params.max_keywords_per_chunk,
-            max_keywords_per_query=params.max_keywords_per_query,
-            num_chunks_per_query=params.num_chunks_per_query,
-            vector_store_query_mode=params.vector_store_query_mode,
-            store_nodes_override=params.store_nodes_override,
-            insert_batch_size=params.insert_batch_size,
-            use_async=params.use_async,
-            show_progress=params.show_progress,
+    def get_index_retriever_params(self) -> SbertConfig:
+        """create instace for sentence embedding config"""
+        embed_config = SbertConfig(
+            model_name= self.config.model_name, 
+            tokenizer_name= self.config.tokenizer_name,
+            pooling= self.config.pooling,
+            max_length= self.config.max_length,
+            normalize= self.config.normalize,
+            embedding_batch_size= self.config.embedding_batch_size,
+            cache_folder= self.config.cache_folder,
+            trust_remote_code= self.config.trust_remote_code,
         )
-        return embed_params
+        return embed_config
     
+    def get_orther_config(self) -> OtherConfig:
+        """create instace for other config"""
+        other_config = OtherConfig(
+            artifacts_root= self.config.artifacts_root,
+            file_data_path= self.config.file_data_path,
+            language= self.config.language,
+            use_async= self.config.use_async,
+            show_progress= self.config.show_progress,
+            vector_store_query_mode= self.config.vector_store_query_mode,
+            store_nodes_override= self.config.store_nodes_override,
+            insert_batch_size= self.config.insert_batch_size,
+            similarity_top_k= self.config.similarity_top_k,
+        )
+        return other_config

@@ -1,11 +1,14 @@
 from typing import (
     Dict,
     Any,
+    Optional
 )
 from dataclasses import dataclass
 
 @dataclass
 class MilvusConfig:
+    vectorstore_name: str
+    embedding_dim: int
     host: str
     port: str
     address: str
@@ -15,56 +18,43 @@ class MilvusConfig:
     primary_field: str
     text_field: str
     consistency_level: str
-
-@dataclass
-class MilvusArguments:
     collection_name: str
     index_params: Dict[str, Any]
     search_params: Dict[str, Any]
-    overwrite: False
+    overwrite: bool
+
+@dataclass
+class CassandraConfig:
+    vectorstore_name: str
     embedding_dim: int
+    table: str
+    embedding_dimension: int
+    session: Optional[Any] = None
+    keyspace: Optional[str] = None
+    ttl_seconds: Optional[int] = None
 
 @dataclass
-class NodeParserConfig:
-    name: str
+class SentenceSplitterConfig:
+    splitter_mode: str
+    model_name_tokenizer: str
+    separator: str
+    chunk_size: int
+    chunk_overlap: int
+    paragraph_separator: str
+    secondary_chunking_regex: str
+
+@dataclass
+class RecursiveSplitterConfig:
+    splitter_mode: str
+    model_name_tokenizer: str
+    separator: str
+    chunk_size: int
+    chunk_overlap: int
+    backup_separators: str
 
 
 @dataclass
-class NodeParserArguments:
-  model_name_tokenizer: str
-  # fpr sentence splitter 
-  splitter_mode: str
-  separator: str
-  chunk_size: int
-  chunk_overlap: int
-  paragraph_separator: str
-  secondary_chunking_regex: str
-  # for token splitter
-  backup_separators: str
-
-@dataclass
-class LlmParams:
-    context_window: int
-    max_new_tokens: int
-    model_name: str
-    tokenizer_name: str
-    device_map: str
-    top_p: int
-    top_k: int
-    temperature: float
-    length_penalty: float
-    repetition_penalty: float
-    num_beams: int
-    do_sample : bool
-    pelnaty_alpha: float
-    use_cache: bool
-    num_return_sequences: int
-    pad_token_id: str
-    bos_token_id: str
-    eos_token_id: str
-
-@dataclass
-class EmbeddingsParams:
+class SbertConfig:
     model_name: str
     tokenizer_name: str
     pooling: str
@@ -75,28 +65,30 @@ class EmbeddingsParams:
     trust_remote_code: bool
 
 @dataclass
-class IndexRetrieveParams:
-    index_type: str
-    similarity_top_k: int
-    alpha: float
-    sparse_top_k: int 
-    # list
-    list_query_mode: str
-    #keyword table
-    keyword_table_mode: str
-    max_keywords_per_chunk: int
-    max_keywords_per_query: int
-    num_chunks_per_query: int
-    # for vector store
+class CrossEmbeddingConfig:
+    qry_model_name: str
+    psg_model_name: str
+    token: str
+    proxies: str
+    methods: str
+    device: str
+    embedding_batch_size: int
+    pooling: str
+    max_length: int
+    normalize: bool
+
+@dataclass
+class OtherConfig:
+    # Path
+    artifacts_root: str
+    file_data_path: str
+    # Normalizer
+    language: str
+    # General
+    use_async: bool
+    show_progress: bool
+    # VectorStoreIndex
     vector_store_query_mode: str
     store_nodes_override: bool
     insert_batch_size: int
-    use_async: bool
-    show_progress: bool
-
-@dataclass
-class ResponseParams:
-    verbose: bool
-    response_mode: str
-    use_async: bool
-    streaming: bool
+    similarity_top_k: int
