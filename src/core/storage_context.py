@@ -132,7 +132,7 @@ class StorageContext:
             docstore=docstore,
         )
 
-    @property
-    def vector_store(self) -> VectorStore:
-        """Backwrds compatibility for vector_store property."""
-        return self.vector_stores[DEFAULT_VECTOR_STORE]
+    @getattr
+    def get_vector_store(self, name_vector_store: str = DEFAULT_VECTOR_STORE) -> VectorStore:
+        """Get vector store value in vector stores by name."""
+        return self.vector_stores[name_vector_store]
