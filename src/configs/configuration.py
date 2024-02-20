@@ -12,6 +12,7 @@ from .schema import (
     RecursiveSplitterConfig,
     SbertConfig,
     CrossEmbeddingConfig,
+    AsymRerankConfig
 )
 
 class ConfigurationManager: 
@@ -112,6 +113,16 @@ class ConfigurationManager:
             trust_remote_code= self.config.trust_remote_code,
         )
         return embed_config
+    
+    def get_asym_rerank_config(self) -> AsymRerankConfig:
+        asym_rerank_config = AsymRerankConfig(
+            model_name_or_path=self.config.model_name_or_path,
+            token=self.config.token,
+            device=self.config.device,
+            methods=self.config.methods,
+            proxies=self.config.proxies,
+        )
+        return asym_rerank_config
     
     def get_orther_config(self) -> OtherConfig:
         """create instace for other config"""

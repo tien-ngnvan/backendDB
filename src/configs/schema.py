@@ -1,7 +1,9 @@
 from typing import (
     Dict,
     Any,
-    Optional
+    Optional,
+    Union,
+    List
 )
 from dataclasses import dataclass
 
@@ -77,6 +79,16 @@ class CrossEmbeddingConfig:
     normalize: bool
 
 @dataclass
+class AsymRerankConfig:
+    model_name_or_path: Optional[Any] = None,
+    model: Optional[Any] = None,
+    tokenizer: Optional[Any] = None,
+    token: Optional[str] = None,
+    device: Union[List[int], int] = None,
+    methods: Optional[str] = 'huggingface',
+    proxies: Optional[str] = None,
+
+@dataclass
 class OtherConfig:
     # Path
     artifacts_root: str
@@ -86,8 +98,9 @@ class OtherConfig:
     # General
     use_async: bool
     show_progress: bool
-    # VectorStoreIndex
+    # retriever
     vector_store_query_mode: str
     store_nodes_override: bool
     insert_batch_size: int
     similarity_top_k: int
+    use_rerank: bool
