@@ -29,6 +29,7 @@ class DatabaseEngine(BaseEngine):
         insert_batch_size: int,
         callback_manager: Optional[CallbackManager],
         splitter: NodeParser,
+        name_vector_store: str,
         service_context: ServiceContext,
         storage_context: StorageContext
     ):
@@ -36,7 +37,7 @@ class DatabaseEngine(BaseEngine):
         self._splitter = splitter
         self._service_context = service_context
         self._storage_context = storage_context
-        self._vector_store: VectorStore = self._storage_context.vector_store
+        self._vector_store: VectorStore = self._storage_context.get_vector_store(name_vector_store=name_vector_store)
         super().__init__(callback_manager=callback_manager)
 
     def run_engine(self, nodes: Sequence[BaseNode], show_progress: bool = False) -> None:
