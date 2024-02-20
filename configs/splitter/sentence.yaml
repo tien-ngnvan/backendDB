@@ -1,0 +1,8 @@
+# @package _group_
+splitter_mode: recursive
+model_name_tokenizer: BAAI/bge-small-en
+separator: " "
+chunk_size: 256
+chunk_overlap: 20
+paragraph_separator: null
+secondary_chunking_regex: null

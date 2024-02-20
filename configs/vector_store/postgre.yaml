@@ -1,0 +1,13 @@
+# @package _group_
+vectorstore_name: "postgre"
+embedding_dim: 384
+connection_string: null
+async_connection_string: null
+table_name: null
+schema_name: null
+hybrid_search: False
+text_search_config: "english"
+cache_ok: False
+perform_setup: True
+debug: False
+use_jsonb: False
