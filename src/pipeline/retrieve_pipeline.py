@@ -2,41 +2,54 @@ import logging
 from typing import Optional, List
 import time
 
-from src.config.schema import (
+from src.configs.schema import (
     MilvusConfig,
-    MilvusArguments,
-    IndexRetrieveParams
+    OtherConfig,
+    CrossEmbeddingConfig,
+    AsymRerankConfig
 )
 
 from src.core.storage_context import StorageContext
 from src.core.service_context import ServiceContext
 from src.engine.retrieve_engine import RetriverEngine
 from src.vector_stores.milvus import MilvusVectorStore
-from llama_index.postprocessor.types import BaseNodePostprocessor
+from src.callbacks.callback_manager import CallbackManager
+from src.embeddings.huggingface import CrossEncoder
+from src.retriever.dense import VectorIndexRetriever
+from src.reranker.asymmetric_reranker import AsymRanker
 
 logger = logging.getLogger(__name__)
 
 class RetrieverPipeline:
     def __init__(self,
         milvus_config: MilvusConfig,
-        milvus_params: MilvusArguments,
-        index_params: IndexRetrieveParams,
-        service_context: Optional[ServiceContext],
-        node_postprocessors: Optional[List[BaseNodePostprocessor]],
+        encoder_config: CrossEmbeddingConfig,
+        other_config: OtherConfig,
+        asym_config: Optional[AsymRerankConfig] = None
     ) -> None:
         self.milvus_config = milvus_config
-        self.milvus_params = milvus_params
-        self.index_params = index_params
-        self.service_context = service_context
-        self.node_postprocessors = node_postprocessors                    
+        self.asym_config = asym_config
+        self.other_config = other_config
 
-    def main(self, query, documents):
+        # callback manager
+        self.callback_manager = CallbackManager()
+
+        # encoder
+        emb_model = self.get_encoder(config=encoder_config)
+
+        self.service_context = ServiceContext.from_defaults(
+            embed_model=emb_model,
+            callback_manager=self.callback_manager
+        )
+
+
+    def main(self, query):
 
         """Wrap time"""
         start_build_collection_index = int(round(time.time() * 1000))
 
-        #TODO: build milvus vector from documents 
-        milvus_vector_store = MilvusVectorStore(self.milvus_config, self.milvus_params)
+        #TODO: Connect to milvus to access collection and index
+        milvus_vector_store = MilvusVectorStore(self.milvus_config)
         # construct index and customize storage context
         storage_context = StorageContext.from_defaults(
             vector_store=milvus_vector_store
@@ -49,13 +62,27 @@ class RetrieverPipeline:
         start_build_retrieve_search = int(round(time.time() * 1000))
 
         #TODO: build retriever
-        retriever = None
+        retriever = VectorIndexRetriever(
+            vector_store=milvus_vector_store,
+            similarity_top_k=self.other_config.similarity_top_k,
+            vector_store_query_mode=self.other_config.vector_store_query_mode,
+            callback_manager=self.callback_manager,
+            service_context=self.service_context,
+            storage_context=storage_context
+        )
 
         #TODO: rerank
         rerank = None
+        if self.other_config.use_rerank:
+            rerank = AsymRanker(
+                model_name_or_path= self.asym_config.model_name_or_path,
+                token= self.asym_config.token,
+                device= [0],
+            )
 
         #TODO: query
         engine = RetriverEngine(
+            callback_manager=self.callback_manager,
             retriever=retriever,
             reranker=rerank
         )
@@ -70,3 +97,14 @@ class RetrieverPipeline:
 
     def apply_rerank():
         pass
+
+    def get_encoder(self, config: CrossEmbeddingConfig) -> CrossEncoder:
+        """create instace for cross embedding"""
+        emb_model = CrossEncoder(
+            qry_model_name=config.qry_model_name,
+            psg_model_name=config.psg_model_name,
+            token=config.token,
+            device=config.device,
+        )
+        return emb_model
+    
