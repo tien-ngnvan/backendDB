@@ -14,7 +14,7 @@ from src.vector_stores import (
     VectorStoreQueryMode,
     VectorStoreQueryResult,
 )
-from src.config.schema import MilvusArguments, MilvusConfig
+from src.configs.schema import MilvusArguments, MilvusConfig
 from .utils import (
     DEFAULT_DOC_ID_KEY,
     DEFAULT_EMBEDDING_KEY,
@@ -92,7 +92,6 @@ class MilvusVectorStore(VectorStore):
     def __init__(
         self,
         config: MilvusConfig,
-        params: MilvusArguments,
     ) -> None:
         """Init params."""
         import_err_msg = (
@@ -106,19 +105,18 @@ class MilvusVectorStore(VectorStore):
         from pymilvus import Collection
 
         self.config = config
-        self.params = params
 
         self.embedding_field = config.embedding_field
         self.doc_id_field = config.primary_field
         self.text_field = config.text_field
         self.consistency_level = config.consistency_level
-        self.dim = params.embedding_dim
-        self.collection_name = params.collection_name
-        self.overwrite = params.overwrite
+        self.dim = config.embedding_dim
+        self.collection_name = config.collection_name
+        self.overwrite = config.overwrite
         
 
         # Select the similarity metric
-        self.similarity_metric = self.params.search_params.get("metric_type", None)
+        self.similarity_metric = self.config.search_params.get("metric_type", None)
 
         # Connect to Milvus instance
         self.milvusclient = self.connect_client()
@@ -267,7 +265,7 @@ class MilvusVectorStore(VectorStore):
             filter=string_expr,
             limit=query.similarity_top_k,
             output_fields=output_fields,
-            search_params=self.params.search_params,
+            search_params=self.config.search_params,
         )
 
         logger.debug(
@@ -321,7 +319,7 @@ class MilvusVectorStore(VectorStore):
             # drop index of that field before build new overwrite index
             self.collection.drop_index()
             # set params
-            index_params: Dict[str, Union[str, Dict[str, Any]]] = self.params.index_params
+            index_params: Dict[str, Union[str, Dict[str, Any]]] = self.config.index_params
             self.collection.create_index(
                 self.embedding_field, index_params=index_params
             )
