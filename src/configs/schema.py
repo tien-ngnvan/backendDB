@@ -28,7 +28,6 @@ class CassandraConfig:
     vectorstore_name: str
     embedding_dim: int
     table: str
-    embedding_dimension: int
     session: Optional[Any] = None
     keyspace: Optional[str] = None
     ttl_seconds: Optional[int] = None

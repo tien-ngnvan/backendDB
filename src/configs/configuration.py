@@ -51,7 +51,6 @@ class ConfigurationManager:
             vectorstore_name= self.config.vectorstore_name,
             embedding_dim= self.config.embedding_dim,
             table= self.config.table,
-            embedding_dimension= self.config.embedding_dimension,
             session= self.config.session,
             keyspace= self.config.keyspace,
             ttl_seconds= self.config.ttl_seconds,
