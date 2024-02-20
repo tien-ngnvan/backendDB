@@ -4,7 +4,7 @@ import time
 from transformers import AutoTokenizer, AutoModel
 
 from src.pipeline.create_db import InitializeDatabase
-from src.config.configuration import ConfigurationManager
+from src.configs.configuration import ConfigurationManager
 from src.core.service_context import ServiceContext
 from src.callbacks import CallbackManager
 from src.node_parser.text.sentence import SentenceSplitter
@@ -68,7 +68,7 @@ node_parser = SentenceSplitter(
 emb_model = CrossEncoder(
     qry_model_name="pythera/mbert-retrieve-qry-base",
     psg_model_name="pythera/mbert-retrieve-ctx-base",
-    token="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",
+    token="xxx",
     device=[0],
 )
 
