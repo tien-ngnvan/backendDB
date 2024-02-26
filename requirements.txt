@@ -12,3 +12,4 @@ rank-bm25
 dataclasses_json
 pypdf
 omegaconf
+flatten-dict
