@@ -14,7 +14,7 @@ from src.vector_stores import (
     VectorStoreQueryMode,
     VectorStoreQueryResult,
 )
-from src.configs.schema import MilvusArguments, MilvusConfig
+from src.configs.schema import MilvusConfig
 from .utils import (
     DEFAULT_DOC_ID_KEY,
     DEFAULT_EMBEDDING_KEY,
@@ -182,6 +182,7 @@ class MilvusVectorStore(VectorStore):
             entry = node_to_metadata_dict(node)
             entry[MILVUS_ID_FIELD] = node.node_id
             entry[self.embedding_field] = node.embedding
+            entry["text"] = node.text
 
             insert_ids.append(node.node_id)
             insert_list.append(entry)
