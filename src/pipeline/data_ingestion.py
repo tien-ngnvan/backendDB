@@ -66,7 +66,8 @@ class InitializeDatabase:
 
         # construct index and customize storage context
         storage_context = StorageContext.from_defaults(
-            vector_store=milvus_vector_store
+            vector_store=milvus_vector_store,
+            vectorstore_name=self.milvus_config.vectorstore_name,
         )
 
         for doc in documents:
@@ -90,6 +91,7 @@ class InitializeDatabase:
             splitter=self.normalizer,
             service_context=self.service_context,
             storage_context=storage_context,
+            name_vector_store=self.milvus_config.vectorstore_name,
         )
 
         data_ingestor.run_engine(nodes=nodes, show_progress=True)
