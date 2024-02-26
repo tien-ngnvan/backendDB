@@ -1,4 +1,3 @@
-# @package _group_
 vectorstore_name: "cassandra"
 embedding_dim: 384
 table: null

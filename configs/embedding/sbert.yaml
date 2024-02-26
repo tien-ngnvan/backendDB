@@ -1,4 +1,3 @@
-# @package _group_
 model_name: BAAI/bge-small-en
 token: null
 trust_remote_code: True

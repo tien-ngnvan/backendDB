@@ -1,4 +1,3 @@
-# @package _group_
 splitter_mode: sentence
 model_name_tokenizer: BAAI/bge-small-en
 separator: " "

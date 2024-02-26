@@ -1,4 +1,3 @@
-# @package _group_
 vectorstore_name: milvus
 embedding_dim: 384
 host: localhost
