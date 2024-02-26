@@ -17,8 +17,8 @@ reader = DirectoryReader(
     input_files=docs_files
 )
 print("reader: ", reader.__dict__)
-pdf_documents = reader.load_data()
-if pdf_documents:
+docs_files = reader.load_data()
+if docs_files:
     print("Load pdf success")
 
 # ------------------
@@ -49,6 +49,6 @@ print(f"Time for load pipeline: {endTime_load - startTime_load} ms")
 
 
 startTime_run= int(round(time.time() * 1000))
-pipeline.main(documents=pdf_documents)
+pipeline.main(documents=docs_files)
 endTime_run= int(round(time.time() * 1000))
 print(f"Time for load pipeline: {endTime_run - startTime_run} ms")
