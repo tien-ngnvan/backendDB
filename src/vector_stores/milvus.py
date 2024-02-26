@@ -4,7 +4,7 @@ An index that is built within Milvus.
 
 """
 import logging
-from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 from src.node.base_node import BaseNode, TextNode
 from src.vector_stores import (
@@ -16,8 +16,6 @@ from src.vector_stores import (
 )
 from src.configs.schema import MilvusConfig
 from .utils import (
-    DEFAULT_DOC_ID_KEY,
-    DEFAULT_EMBEDDING_KEY,
     metadata_dict_to_node,
     node_to_metadata_dict,
 )
