@@ -3,7 +3,7 @@ psg_model_name: null
 token: null
 proxies: null
 methods: huggingface
-device: cpu
+device: [0]
 embedding_batch_size: 10
 pooling: cls
 max_length: 512

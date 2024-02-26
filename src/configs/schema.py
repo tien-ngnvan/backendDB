@@ -72,7 +72,7 @@ class CrossEmbeddingConfig:
     token: str
     proxies: str
     methods: str
-    device: str
+    device: List[str]
     embedding_batch_size: int
     pooling: str
     max_length: int
