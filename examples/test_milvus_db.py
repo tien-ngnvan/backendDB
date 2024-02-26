@@ -11,10 +11,10 @@ import glob
 
 startTime_load = int(round(time.time() * 1000))
 
-pdf_files = glob.glob(os.path.abspath(os.curdir) + "/data/*.docx")
-print("pdf_files: ", pdf_files)
+docs_files = glob.glob(os.path.abspath(os.curdir) + "/data/*.docx")
+print("pdf_files: ", docs_files)
 reader = DirectoryReader(
-    input_files=pdf_files
+    input_files=docs_files
 )
 print("reader: ", reader.__dict__)
 pdf_documents = reader.load_data()
