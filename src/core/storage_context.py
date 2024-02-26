@@ -44,6 +44,7 @@ class StorageContext:
         cls,
         docstore: Optional[BaseDocumentStore] = None,
         vector_store: Optional[VectorStore] = None,
+        vectorstore_name: str = DEFAULT_VECTOR_STORE,
         persist_dir: Optional[str] = None,
         fs: Optional[fsspec.AbstractFileSystem] = None,
     ) -> "StorageContext":
@@ -57,14 +58,14 @@ class StorageContext:
         if persist_dir is None:
             docstore = docstore or SimpleDocumentStore()
             if vector_store:
-                vector_stores = {DEFAULT_VECTOR_STORE: vector_store}
+                vector_stores = {vectorstore_name: vector_store}
         
         else:
             docstore = docstore or SimpleDocumentStore.from_persist_dir(
                 persist_dir, fs=fs
             )
             if vector_store:
-                vector_stores = {DEFAULT_VECTOR_STORE: vector_store}
+                vector_stores = {vectorstore_name: vector_store}
 
         return cls(
             docstore=docstore,
@@ -132,7 +133,6 @@ class StorageContext:
             docstore=docstore,
         )
 
-    @getattr
     def get_vector_store(self, name_vector_store: str = DEFAULT_VECTOR_STORE) -> VectorStore:
         """Get vector store value in vector stores by name."""
         return self.vector_stores[name_vector_store]
