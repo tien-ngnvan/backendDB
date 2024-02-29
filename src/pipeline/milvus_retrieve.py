@@ -20,7 +20,7 @@ from src.reranker.asymmetric_reranker import AsymRanker
 
 logger = logging.getLogger(__name__)
 
-class RetrieverPipeline:
+class MilvusRetrieverPipeline:
     def __init__(self,
         milvus_config: MilvusConfig,
         encoder_config: CrossEmbeddingConfig,
