@@ -9,6 +9,7 @@ from src.callbacks.callback_manager import CallbackManager
 from src.node.base_node import NodeWithScore
 from src.retriever.types import QueryBundle, QueryType
 from src.retriever.base_retriver import BaseRetriever
+from src.reranker.base_reranker import BaseReranker
 
 from .base import BaseEngine
 
@@ -21,7 +22,7 @@ class RetriverEngine(BaseEngine):
         self, 
         callback_manager: Optional[CallbackManager],
         retriever: BaseRetriever,
-        reranker: Optional[Any] = None,
+        reranker: Optional[BaseReranker] = None,
     ) -> None:
         self.retriever = retriever
         self.reranker = reranker
