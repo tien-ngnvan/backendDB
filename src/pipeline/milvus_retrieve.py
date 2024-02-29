@@ -73,7 +73,7 @@ class MilvusRetrieverPipeline:
 
         #TODO: rerank
         rerank = None
-        if self.other_config.use_rerank:
+        if self.asym_config is not None:
             rerank = AsymRanker(
                 model_name_or_path= self.asym_config.model_name_or_path,
                 token= self.asym_config.token,
