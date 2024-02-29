@@ -1,0 +1,3 @@
+top_n: 2
+model: rerank-english-v2.0
+api_key: null
