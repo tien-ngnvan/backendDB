@@ -117,19 +117,19 @@ class ConfigurationManager:
     
     def get_asym_rerank_config(self) -> AsymRerankConfig:
         asym_rerank_config = AsymRerankConfig(
-            model_name_or_path=self.config.model_name_or_path,
-            token=self.config.token,
-            device=self.config.device,
-            methods=self.config.methods,
-            proxies=self.config.proxies,
+            model_name_or_path=self.config.rerank.model_name_or_path,
+            token=self.config.rerank.token,
+            device=self.config.rerank.device,
+            methods=self.config.rerank.methods,
+            proxies=self.config.rerank.proxies,
         )
         return asym_rerank_config
     
     def get_cohere_config(self) -> CohereRerankConfig:
         cohere_config = CohereRerankConfig(
-            top_n=self.config.top_n,
-            model=self.config.model,
-            api_key=self.config.api_key,
+            top_n=self.config.rerank.top_n,
+            model=self.config.rerank.model,
+            api_key=self.config.rerank.api_key,
         )
         return cohere_config
 
