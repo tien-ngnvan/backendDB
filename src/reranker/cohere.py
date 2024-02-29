@@ -2,9 +2,7 @@ import os
 from typing import Any, List, Optional
 
 from src.bridge.pydantic import Field, PrivateAttr
-from src.callbacks import CBEventType, EventPayload
 from src.node.base_node import NodeWithScore
-from src.retriever.types import QueryBundle
 
 from .base_reranker import BaseReranker
 
@@ -43,39 +41,29 @@ class CohereRerank(BaseReranker):
     def class_name(cls) -> str:
         return "CohereRerank"
 
-    def _postprocess_nodes(
+    def _get_ranker(
         self,
         nodes: List[NodeWithScore],
-        query_bundle: Optional[QueryBundle] = None,
+        query_bundle: Optional[str] = None,
     ) -> List[NodeWithScore]:
         if query_bundle is None:
             raise ValueError("Missing query bundle in extra info.")
         if len(nodes) == 0:
             return []
+        
+        texts = [node.node.get_content() for node in nodes]
+        results = self._client.rerank(
+            model=self.model,
+            top_n=self.top_n,
+            query=query_bundle,
+            documents=texts,
+        )
 
-        with self.callback_manager.event(
-            CBEventType.RERANKING,
-            payload={
-                EventPayload.NODES: nodes,
-                EventPayload.MODEL_NAME: self.model,
-                EventPayload.QUERY_STR: query_bundle.query_str,
-                EventPayload.TOP_K: self.top_n,
-            },
-        ) as event:
-            texts = [node.node.get_content() for node in nodes]
-            results = self._client.rerank(
-                model=self.model,
-                top_n=self.top_n,
-                query=query_bundle.query_str,
-                documents=texts,
+        new_nodes = []
+        for result in results:
+            new_node_with_score = NodeWithScore(
+                node=nodes[result.index].node, score=result.relevance_score
             )
-
-            new_nodes = []
-            for result in results:
-                new_node_with_score = NodeWithScore(
-                    node=nodes[result.index].node, score=result.relevance_score
-                )
-                new_nodes.append(new_node_with_score)
-            event.on_end(payload={EventPayload.NODES: new_nodes})
+            new_nodes.append(new_node_with_score)
 
         return new_nodes
