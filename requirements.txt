@@ -12,4 +12,6 @@ rank-bm25
 dataclasses_json
 pypdf
 omegaconf
-flatten-dict
+pydantic
+hydra-core
+docx2txt
