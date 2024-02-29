@@ -80,13 +80,19 @@ class CrossEmbeddingConfig:
 
 @dataclass
 class AsymRerankConfig:
-    model_name_or_path: Optional[Any] = None,
-    model: Optional[Any] = None,
-    tokenizer: Optional[Any] = None,
-    token: Optional[str] = None,
-    device: Union[List[int], int] = None,
-    methods: Optional[str] = 'huggingface',
-    proxies: Optional[str] = None,
+    model_name_or_path: Optional[Any] = None
+    model: Optional[Any] = None
+    tokenizer: Optional[Any] = None
+    token: Optional[str] = None
+    device: Union[List[int], int] = None
+    methods: Optional[str] = 'huggingface'
+    proxies: Optional[str] = None
+
+@dataclass
+class CohereRerankConfig:
+    top_n: int
+    model: str
+    api_key: str
 
 @dataclass
 class OtherConfig:
