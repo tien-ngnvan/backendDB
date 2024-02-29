@@ -12,7 +12,8 @@ from .schema import (
     RecursiveSplitterConfig,
     SbertConfig,
     CrossEmbeddingConfig,
-    AsymRerankConfig
+    AsymRerankConfig,
+    CohereRerankConfig
 )
 
 class ConfigurationManager: 
@@ -123,6 +124,15 @@ class ConfigurationManager:
             proxies=self.config.proxies,
         )
         return asym_rerank_config
+    
+    def get_cohere_config(self) -> CohereRerankConfig:
+        cohere_config = CohereRerankConfig(
+            top_n=self.config.top_n,
+            model=self.config.model,
+            api_key=self.config.api_key,
+        )
+        return cohere_config
+
     
     def get_orther_config(self) -> OtherConfig:
         """create instace for other config"""
