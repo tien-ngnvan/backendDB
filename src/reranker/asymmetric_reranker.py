@@ -23,9 +23,11 @@ class AsymRanker(BaseReranker):
         if torch.cuda.is_available():
             if device is None:
                 device = ["cuda:{}".format(i) for i in range(torch.cuda.device_count())]
+            elif isinstance(device, int):
+                device = "cuda:{}".format(device)
             else:
                 device = ["cuda:{}".format(i) for i in device]
-            self.device = device if len(device) == 1 else device[0]
+            self.device = device if isinstance(device, str) else device[0]
         else:
             logger.info("CUDA is not available. Set default 2 CPU workers")
             self.device = 'cpu'
