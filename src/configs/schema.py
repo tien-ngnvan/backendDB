@@ -109,4 +109,3 @@ class OtherConfig:
     store_nodes_override: bool
     insert_batch_size: int
     similarity_top_k: int
-    use_rerank: bool

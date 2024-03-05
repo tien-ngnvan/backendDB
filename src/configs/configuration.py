@@ -146,6 +146,5 @@ class ConfigurationManager:
             store_nodes_override= self.config.store_nodes_override,
             insert_batch_size= self.config.insert_batch_size,
             similarity_top_k= self.config.similarity_top_k,
-            use_rerank= self.config.use_rerank,
         )
         return other_config
