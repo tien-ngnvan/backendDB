@@ -15,4 +15,4 @@ defaults:
   - embedding: cross
   - splitter: sentence
   - vector_store: milvus
-  - reraank: cohere
+  - rerank: cohere
