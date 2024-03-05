@@ -7,25 +7,8 @@ from hydra import compose, initialize_config_dir
 from src.pipeline.milvus_retrieve import MilvusRetrieverPipeline
 from src.configs.configuration import ConfigurationManager
 
-# tạo database 
-# input data
-
-from src.reader.dir_reader import DirectoryReader
-import glob
-
-startTime_load = int(round(time.time() * 1000))
-
-docs_files_path = glob.glob(os.path.abspath(os.curdir) + "/data/*.docx")
-print("pdf_files: ", docs_files_path)
-reader = DirectoryReader(
-    input_files=docs_files_path
-)
-print("reader: ", reader.__dict__)
-docs_files = reader.load_data()
-if docs_files:
-    print("Load pdf success")
-
 # ------------------
+startTime_load = int(round(time.time() * 1000))
 
 # using hydra to load config
 initialize_config_dir(version_base=None, config_dir=os.path.abspath(os.curdir) +  "/configs/")
@@ -59,7 +42,6 @@ while True:
     startTime = int(round(time.time() * 1000))
     nodes = retriever_pipeline.main(
         query=query_user,
-        documents=docs_files,
     )
     for node in nodes:
         print("-" * 20)
