@@ -71,8 +71,6 @@ def metadata_dict_to_node(metadata: dict, text: Optional[str] = None) -> BaseNod
     node: BaseNode
     if node_type == IndexNode.class_name():
         node = IndexNode.parse_raw(node_json)
-    elif node_type == ImageNode.class_name():
-        node = ImageNode.parse_raw(node_json)
     else:
         node = TextNode.parse_raw(node_json)
 
