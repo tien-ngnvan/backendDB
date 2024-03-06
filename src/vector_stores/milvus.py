@@ -5,6 +5,7 @@ An index that is built within Milvus.
 """
 import logging
 from typing import Any, Dict, List, Union, TYPE_CHECKING
+from omegaconf import OmegaConf
 
 from src.node.base_node import BaseNode, TextNode
 from src.vector_stores import (
@@ -278,7 +279,7 @@ class MilvusVectorStore(VectorStore):
 
         # Parse the results
         for hit in res[0]:
-            if not self.text_key:
+            if not self.text_field:
                 node = metadata_dict_to_node(
                     {
                         "_node_content": hit["entity"].get("_node_content", None),
@@ -287,7 +288,7 @@ class MilvusVectorStore(VectorStore):
                 )
             else:
                 try:
-                    text = hit["entity"].get(self.text_key)
+                    text = hit["entity"].get(self.text_field)
                 except Exception:
                     raise ValueError(
                         "The passed in text_key value does not exist "
