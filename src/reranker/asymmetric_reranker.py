@@ -15,7 +15,7 @@ class AsymRanker(BaseReranker):
         model: Optional[Any] = None,
         tokenizer: Optional[Any] = None,
         token: Optional[str] = None,
-        device: Union[List[int], int] = None,
+        device: Union[int, Any] = None,
         methods: Optional[str] = 'huggingface',
         proxies: Optional[str] = None,
     ):
@@ -26,7 +26,7 @@ class AsymRanker(BaseReranker):
             elif isinstance(device, int):
                 device = "cuda:{}".format(device)
             else:
-                device = ["cuda:{}".format(i) for i in device]
+                device = "cpu"
             self.device = device if isinstance(device, str) else device[0]
         else:
             logger.info("CUDA is not available. Set default 2 CPU workers")
