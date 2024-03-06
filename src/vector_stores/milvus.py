@@ -141,7 +141,7 @@ class MilvusVectorStore(VectorStore):
         self.collection = Collection(
             self.collection_name, using=self.milvusclient._using
         )
-        self._create_index_if_required(force=True)
+        self._create_index_if_required()
         logger.debug(f"Successfully created a new collection: {self.collection_name}")
 
     def connect_client(self) -> "MilvusClient":
@@ -303,7 +303,7 @@ class MilvusVectorStore(VectorStore):
 
         return VectorStoreQueryResult(nodes=nodes, similarities=similarities, ids=ids)
 
-    def _create_index_if_required(self, force: bool = False) -> None:
+    def _create_index_if_required(self) -> None:
         """
         This method is introduced to allow the index to be created
         both in the constructor and in the `add` method. 
@@ -313,7 +313,7 @@ class MilvusVectorStore(VectorStore):
         if self.overwrite is true.
         """
 
-        if (self.collection.has_index() and self.overwrite) or force:
+        if self.collection.has_index() and self.overwrite:
             # release out of memory first
             self.collection.release()
             # drop index of that field before build new overwrite index
