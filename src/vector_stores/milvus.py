@@ -115,7 +115,9 @@ class MilvusVectorStore(VectorStore):
         
 
         # Select the similarity metric
-        self.similarity_metric = self.config.search_params.get("metric_type", None)
+        self.index_params: Dict[str, Union[str, Dict[str, Any]]] = self.config.index_params
+        self.search_params: Dict[str, Union[str, Dict[str, Any]]] = self.config.search_params
+        assert self.index_params.metric_type == self.search_params.metric_type, "Index and search metric type must be the same type"
 
         # Connect to Milvus instance
         self.milvusclient = self.connect_client()
@@ -134,7 +136,7 @@ class MilvusVectorStore(VectorStore):
                 primary_field_name=MILVUS_ID_FIELD,
                 vector_field_name=self.embedding_field,
                 id_type="string",
-                metric_type=self.similarity_metric,
+                metric_type=self.index_params.metric_type,
                 max_length=65_535,
             )
         
@@ -265,7 +267,7 @@ class MilvusVectorStore(VectorStore):
             filter=string_expr,
             limit=query.similarity_top_k,
             output_fields=output_fields,
-            search_params=self.config.search_params,
+            search_params=self.search_params,
         )
 
         logger.debug(
@@ -319,9 +321,8 @@ class MilvusVectorStore(VectorStore):
             # drop index of that field before build new overwrite index
             self.collection.drop_index()
             # set params
-            index_params: Dict[str, Union[str, Dict[str, Any]]] = self.config.index_params
             self.collection.create_index(
-                self.embedding_field, index_params=index_params
+                self.embedding_field, index_params=self.index_params
             )
             print("Create index succesfully")
             self.collection.load()
