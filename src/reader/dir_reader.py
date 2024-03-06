@@ -15,10 +15,12 @@ from tqdm import tqdm
 from src.node.base_node import Document
 from src.reader.base_reader import BaseReader
 from .file.docx import DocxReader
+from .file.txt import TxtReader
 
 
 DEFAULT_FILE_READER_CLS: Dict[str, Type[BaseReader]] = {
     ".docx": DocxReader,
+    ".txt": TxtReader,
 }
 
 
