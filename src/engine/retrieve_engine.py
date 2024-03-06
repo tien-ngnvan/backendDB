@@ -58,5 +58,8 @@ class RetriverEngine(BaseEngine):
         query_bundle: QueryBundle
     ) -> List[NodeWithScore]:
         if self.reranker:
-            nodes = self.reranker.get_ranker(nodes, query_bundle)
+            nodes = self.reranker.get_ranker(
+                query_node=query_bundle.query_str, 
+                text_bundle=[node.node.get_content() for node in nodes],
+            )
         return nodes
