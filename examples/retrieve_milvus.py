@@ -44,10 +44,12 @@ while True:
         query=query_user,
     )
     for node in nodes:
-        print("-" * 20)
-        text = node.get_content().strip()
-        metadata_info = node.node.get_metadata_str()
-        score = node.score
-        print( f"Node ID:{node.node_id}\nMETADATA\n:{metadata_info}\nText:\n'''{text}'''\nScore:{score}")
+        # print("-" * 20)
+        # text = node.get_content().strip()
+        # metadata_info = node.node.get_metadata_str()
+        # score = node.score
+        # print( f"Node ID:{node.node_id}\nMETADATA\n:{metadata_info}\nText:\n'''{text}'''\nScore:{score}")
+        print(node)
+        print("\n\n")
     endTime = int(round(time.time() * 1000))
     print(f"Time for retriever_pipeline: {endTime - startTime} ms")
