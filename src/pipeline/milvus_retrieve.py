@@ -17,6 +17,7 @@ from src.callbacks.callback_manager import CallbackManager
 from src.embeddings.huggingface import CrossEncoder
 from src.retriever.dense import VectorIndexRetriever
 from src.reranker.asymmetric_reranker import AsymRanker
+from src.retriever.types import QueryBundle
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ class MilvusRetrieverPipeline:
         )
 
 
-    def main(self, query):
+    def main(self, query: str):
 
         """Wrap time"""
         start_build_collection_index = int(round(time.time() * 1000))
@@ -88,7 +89,7 @@ class MilvusRetrieverPipeline:
         )
         
         #TODO: query
-        docs = engine.search(query)
+        docs = engine.search(QueryBundle(query))
 
         end_build_retrieve_search = int(round(time.time() * 1000))
         print(f"Time for build retriever and search: {end_build_retrieve_search - start_build_retrieve_search} ms")
