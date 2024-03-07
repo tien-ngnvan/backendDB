@@ -1,6 +1,6 @@
 from pathlib import Path
-from rag.reader.base_reader import BaseReader
-from rag.node.base_node import Document
+from src.reader.base_reader import BaseReader
+from src.node.base_node import Document
 
 
 class TxtReader(BaseReader):
