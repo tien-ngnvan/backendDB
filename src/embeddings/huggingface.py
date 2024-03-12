@@ -30,7 +30,7 @@ class CrossEncoder(BaseEmbedding):
         psg_model: Optional[Any] = None,
         tokenizer: Optional[Any] = None,
         token: Optional[str] = None,
-        device: Union[List[int], int] = None,
+        device: Union[List[int], int, str] = None,
         methods: Optional[str] = 'huggingface',
         proxies: Optional[str] = None,
         normalize: Optional[bool] = False,
@@ -50,7 +50,7 @@ class CrossEncoder(BaseEmbedding):
             proxies (Optional[str], optional): Model Server URL as a string format <address>:<port> connect openvino server. Defaults to None.
             normalize (Optional[bool], optional): normalize embedding (use with cosine-similarity). Defaults to False.
         """
-        if torch.cuda.is_available():
+        if torch.cuda.is_available() and (isinstance(device, int) or isinstance(device, list)):
             if device is None:
                 device = ["cuda:{}".format(i) for i in range(torch.cuda.device_count())]
             else:
