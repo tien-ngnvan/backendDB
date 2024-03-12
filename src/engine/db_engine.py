@@ -78,8 +78,6 @@ class DatabaseEngine(BaseEngine):
             nodes_batch = self._get_node_with_embedding(nodes_batch, show_progress)
             # insert to vector_store
             new_ids = self._vector_store.add(nodes_batch, **insert_kwargs)
-
-            print("self._vector_store.stores_text: ", self._vector_store.stores_text)
             
             # NOTE: if the vector store doesn't store text,
             # we need to add the nodes to document store
@@ -193,7 +191,7 @@ class DatabaseEngine(BaseEngine):
 
         texts_to_embed = []
         ids_to_embed = []
-        print(nodes)
+
         for node in nodes:
             if node.embedding is None:
                 ids_to_embed.append(node.node_id)
