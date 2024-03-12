@@ -54,6 +54,7 @@ class CrossEncoder(BaseEmbedding):
             if device is None:
                 device = ["cuda:{}".format(i) for i in range(torch.cuda.device_count())]
             else:
+                if isinstance(device, int): device = [device]
                 device = ["cuda:{}".format(i) for i in device]
             # only use 2 gpus
             self._device = device[:2] if len(device) > 2 else device * 2
