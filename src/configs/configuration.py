@@ -1,6 +1,5 @@
 from omegaconf import DictConfig
 
-from src.constants import *
 from src.utils.files import (
     create_directories
 )
