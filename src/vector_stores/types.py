@@ -79,7 +79,7 @@ class VectorStoreQuery:
     output_fields: Optional[List[str]] = None
     embedding_field: Optional[str] = None
 
-    mode: VectorStoreQueryMode = VectorStoreQueryMode.DEFAULT
+    mode: str = VectorStoreQueryMode.DEFAULT
 
     # NOTE: only for hybrid search (0 for bm25, 1 for vector search)
     alpha: Optional[float] = None
