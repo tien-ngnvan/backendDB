@@ -5,7 +5,7 @@ An index that is built within Milvus.
 """
 import logging
 from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
-
+from omegaconf import OmegaConf, DictConfig
 from src.node.base_node import BaseNode, TextNode
 from src.vector_stores import (
     MetadataFilters,
@@ -131,11 +131,18 @@ class MilvusVectorStore(VectorStore):
         self.text_field = text_field
         self.consistency_level = consistency_level
         self.overwrite = overwrite
+
+        # resolve config when passing DictConfig of omega to Milvus
+        if isinstance(search_params, DictConfig):
+            search_params = OmegaConf.to_container(search_params, resolve=True)
         self.search_params = search_params
+        if isinstance(index_params, DictConfig):
+            index_params = OmegaConf.to_container(index_params, resolve=True)
         self.index_params = index_params
 
         # Select the similarity metric
-        assert self.index_params.metric_type == self.search_params.metric_type, "Index and search metric type must be the same type"
+        metric_type = self.search_params.get("metric_type", None)
+        assert metric_type == self.index_params.get("metric_type", None), "Index and search metric type must be the same type"
 
         # Connect to Milvus instance
         self.milvusclient = self.connect_client()
@@ -154,7 +161,7 @@ class MilvusVectorStore(VectorStore):
                 primary_field_name=MILVUS_ID_FIELD,
                 vector_field_name=self.embedding_field,
                 id_type="string",
-                metric_type=self.index_params.metric_type,
+                metric_type=metric_type,
                 max_length=65_535,
             )
         
