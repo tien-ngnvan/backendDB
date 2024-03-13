@@ -6,7 +6,9 @@ from typing import (
     List
 )
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json, Undefined
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class MilvusConfig:
     vectorstore_name: str
@@ -21,10 +23,11 @@ class MilvusConfig:
     text_field: str
     consistency_level: str
     collection_name: str
-    index_params: Dict[str, Any]
-    search_params: Dict[str, Any]
+    index_params: Dict[str, Union[str, Dict[str, Any]]]
+    search_params: Dict[str, Union[str, Dict[str, Any]]]
     overwrite: bool
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CassandraConfig:
     vectorstore_name: str
@@ -34,6 +37,7 @@ class CassandraConfig:
     keyspace: Optional[str] = None
     ttl_seconds: Optional[int] = None
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class SentenceSplitterConfig:
     splitter_mode: str
@@ -44,6 +48,7 @@ class SentenceSplitterConfig:
     paragraph_separator: str
     secondary_chunking_regex: str
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class RecursiveSplitterConfig:
     splitter_mode: str
@@ -53,7 +58,7 @@ class RecursiveSplitterConfig:
     chunk_overlap: int
     backup_separators: str
 
-
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class SbertConfig:
     model_name: str
@@ -65,6 +70,7 @@ class SbertConfig:
     cache_folder: str
     trust_remote_code: bool
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CrossEmbeddingConfig:
     qry_model_name: str
@@ -72,22 +78,24 @@ class CrossEmbeddingConfig:
     token: str
     proxies: str
     methods: str
-    device: List[str]
+    device: Union[List[int], int, str]
     embedding_batch_size: int
     pooling: str
     max_length: int
     normalize: bool
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class AsymRerankConfig:
     model_name_or_path: Optional[Any] = None
     model: Optional[Any] = None
     tokenizer: Optional[Any] = None
     token: Optional[str] = None
-    device: Union[List[int], int] = None
+    device: Optional[Union[str, int, List[int]]] = None
     methods: Optional[str] = 'huggingface'
     proxies: Optional[str] = None
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CohereRerankConfig:
     top_n: int
