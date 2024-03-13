@@ -49,7 +49,7 @@ class DatabaseEngine(BaseEngine):
     def is_validate_nodes(
         self,
         nodes: Sequence[BaseNode],
-    ) -> bool:
+    ) -> Sequence[BaseNode]:
         """Validating node."""
         # raise an error if even one node has no content
         for node in nodes:
