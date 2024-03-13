@@ -4,8 +4,7 @@ An index that is built within Milvus.
 
 """
 import logging
-from typing import Any, Dict, List, Union, TYPE_CHECKING
-from omegaconf import OmegaConf
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 from src.node.base_node import BaseNode, TextNode
 from src.vector_stores import (
@@ -15,10 +14,13 @@ from src.vector_stores import (
     VectorStoreQueryMode,
     VectorStoreQueryResult,
 )
-from src.configs.schema import MilvusConfig
+
 from .utils import (
     metadata_dict_to_node,
     node_to_metadata_dict,
+    DEFAULT_DOC_ID_KEY,
+    DEFAULT_EMBEDDING_KEY,
+    DEFAULT_TEXT_KEY,
 )
 
 if TYPE_CHECKING:
@@ -70,11 +72,11 @@ class MilvusVectorStore(VectorStore):
             name. Defaults to False.
         text_key (str, optional): What key text is stored in in the passed collection.
             Used when bringing your own collection. Defaults to None.
-        index_config (dict, optional): The configuration used for building the
+        index (dict, optional): Theuration used for building the
             Milvus index. Defaults to None.
-        search_config (dict, optional): The configuration used for searching
+        search (dict, optional): Theuration used for searching
             the Milvus index. Note that this must be compatible with the index
-            type specified by `index_config`. Defaults to None.
+            type specified by `index`. Defaults to None.
 
     Raises:
         ImportError: Unable to import `pymilvus`.
@@ -90,7 +92,21 @@ class MilvusVectorStore(VectorStore):
 
     def __init__(
         self,
-        config: MilvusConfig,
+        host: Optional[str] = None,
+        port: Optional[str] = None,
+        uri: str = "http://localhost:19530",
+        address: Optional[str] = None,
+        user: Optional[str] = None,
+        collection_name: str = "rag_collection",
+        dim: Optional[int] = None,
+        embedding_field: str = DEFAULT_EMBEDDING_KEY,
+        doc_id_field: str = DEFAULT_DOC_ID_KEY,
+        text_field: Optional[str] = DEFAULT_TEXT_KEY,
+        consistency_level: str = "Strong",
+        overwrite: bool = False,
+        search_params: Optional[Dict[str, Union[str, dict]]] = None, 
+        index_params: Optional[Dict[str, Union[str, dict]]] = None, 
+        **kwargs,
     ) -> None:
         """Init params."""
         import_err_msg = (
@@ -103,20 +119,22 @@ class MilvusVectorStore(VectorStore):
 
         from pymilvus import Collection
 
-        self.config = config
-
-        self.embedding_field = config.embedding_field
-        self.doc_id_field = config.primary_field
-        self.text_field = config.text_field
-        self.consistency_level = config.consistency_level
-        self.dim = config.embedding_dim
-        self.collection_name = config.collection_name
-        self.overwrite = config.overwrite
-        
+        self.host = host
+        self.port = port
+        self.address = address
+        self.uri = uri
+        self.user = user
+        self.collection_name = collection_name
+        self.dim = dim
+        self.embedding_field = embedding_field
+        self.doc_id_field = doc_id_field
+        self.text_field = text_field
+        self.consistency_level = consistency_level
+        self.overwrite = overwrite
+        self.search_params = search_params
+        self.index_params = index_params
 
         # Select the similarity metric
-        self.index_params: Dict[str, Union[str, Dict[str, Any]]] = self.config.index_params
-        self.search_params: Dict[str, Union[str, Dict[str, Any]]] = self.config.search_params
         assert self.index_params.metric_type == self.search_params.metric_type, "Index and search metric type must be the same type"
 
         # Connect to Milvus instance
@@ -149,10 +167,10 @@ class MilvusVectorStore(VectorStore):
     def connect_client(self) -> "MilvusClient":
         from pymilvus import MilvusClient
         # Order of use is host/port, uri, address
-        if self.config.uri is not None:
-            return MilvusClient(self.config.uri)
-        elif self.config.host is not None and self.config.port is not None:
-            uri = f"http://{self.config.host}:{self.config.port}"
+        if self.uri is not None:
+            return MilvusClient(self.uri)
+        elif self.host is not None and self.port is not None:
+            uri = f"http://{self.host}:{self.port}"
             return MilvusClient(uri=uri)
         raise Exception("Cannot connect milvus database")
 
