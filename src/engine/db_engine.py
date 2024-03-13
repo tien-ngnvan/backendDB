@@ -128,7 +128,6 @@ class DatabaseEngine(BaseEngine):
         """
         id_to_embed_map = await self.async_embed_nodes(
             nodes=nodes,
-            embed_model=self._service_context.embed_model,
             show_progress=show_progress,
         )
 
