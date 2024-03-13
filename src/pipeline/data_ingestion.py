@@ -1,7 +1,7 @@
 import logging 
 from typing import Optional, List
 import time
-
+from dataclasses import asdict
 from transformers import AutoTokenizer
 
 from src.configs.schema import (
@@ -57,19 +57,7 @@ class InitializeDatabase:
 
         #TODO: build milvus vector from documents
         milvus_vector_store = MilvusVectorStore(
-            host=self.milvus_config.host,
-            port=self.milvus_config.port,
-            address=self.milvus_config.address,
-            uri=self.milvus_config.uri,
-            user=self.milvus_config.user,
-            consistency_level=self.milvus_config.consistency_level,
-            doc_id_field=self.milvus_config.primary_field,
-            text_field=self.milvus_config.text_field,
-            embedding_field=self.milvus_config.embedding_field,
-            collection_name=self.milvus_config.collection_name,
-            index_params=self.milvus_config.index_params,
-            search_params=self.milvus_config.search_params,
-            overwrite=self.milvus_config.overwrite,
+            **asdict(self.milvus_config),
         )
 
         # construct index and customize storage context

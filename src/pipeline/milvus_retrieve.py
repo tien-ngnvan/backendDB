@@ -1,7 +1,7 @@
 import logging 
 from typing import Optional, List
 import time
-
+from dataclasses import asdict
 from src.configs.schema import (
     MilvusConfig,
     OtherConfig,
@@ -50,7 +50,7 @@ class MilvusRetrieverPipeline:
         start_build_collection_index = int(round(time.time() * 1000))
 
         #TODO: Connect to milvus to access collection and index
-        milvus_vector_store = MilvusVectorStore(self.milvus_config)
+        milvus_vector_store = MilvusVectorStore(**asdict(self.milvus_config))
         # construct index and customize storage context
         storage_context = StorageContext.from_defaults(
             vector_store=milvus_vector_store
