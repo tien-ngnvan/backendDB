@@ -105,7 +105,6 @@ class InitializeDatabase:
             service_context=self.service_context,
             storage_context=self.storage_context,
             name_vector_store=self.milvus_config.vectorstore_name,
-            **vars(self.other_config),
         )
 
         data_ingestor.run_engine(nodes=nodes, show_progress=True)
