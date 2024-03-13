@@ -1,4 +1,7 @@
 from typing import List, Dict, Optional, Iterable, Generator, cast
+import sys
+import os
+from pathlib import Path
 
 # Sample text from llama_index's readme
 SAMPLE_TEXT = """
@@ -112,13 +115,6 @@ def _get_colored_text(text: str, color: str) -> str:
 
 """Support for synthesizer"""
 
-def truncate_text(text: str, max_length: int) -> str:
-    """Truncate text to a maximum length."""
-    if len(text) <= max_length:
-        return text
-    return text[: max_length - 3] + "..."
-
-
 def get_tqdm_iterable(items: Iterable, show_progress: bool, desc: str) -> Iterable:
     """
     Optionally get a tqdm iterable. Ensures tqdm.auto is used.
@@ -197,6 +193,35 @@ def iter_batch(iterable: Union[Iterable, Generator], size: int) -> Iterable:
             break
         yield b
 
+def get_cache_dir() -> str:
+    """Locate a platform-appropriate cache directory for llama_index,
+    and create it if it doesn't yet exist.
+    """
+    # User override
+    if "BACKEND_CACHE_DIR" in os.environ:
+        path = Path(os.environ["BACKEND_CACHE_DIR"])
+
+    # Linux, Unix, AIX, etc.
+    elif os.name == "posix" and sys.platform != "darwin":
+        path = Path("/tmp/backend_db_cache")
+
+    # Mac OS
+    elif sys.platform == "darwin":
+        path = Path(os.path.expanduser("~"), "Library/Caches/backend_db")
+
+    # Windows (hopefully)
+    else:
+        local = os.environ.get("LOCALAPPDATA", None) or os.path.expanduser(
+            "~\\AppData\\Local"
+        )
+        path = Path(local, "backend_db")
+
+    if not os.path.exists(path):
+        os.makedirs(
+            path, exist_ok=True
+        )  # prevents https://github.com/jerryjliu/llama_index/issues/7362
+    return str(path)
+
 
 class GlobalsHelper:
     """Helper to retrieve globals.
@@ -237,7 +262,7 @@ class GlobalsHelper:
                     "`nltk` package not found, please run `pip install nltk`"
                 )
 
-            from llama_index.utils import get_cache_dir
+            from src.utils.utils import get_cache_dir
 
             cache_dir = get_cache_dir()
             nltk_data_dir = os.environ.get("NLTK_DATA", cache_dir)
