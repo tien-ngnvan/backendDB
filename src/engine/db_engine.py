@@ -28,14 +28,12 @@ class DatabaseEngine(BaseEngine):
         self, 
         insert_batch_size: int,
         callback_manager: Optional[CallbackManager],
-        splitter: NodeParser,
         name_vector_store: str,
         service_context: ServiceContext,
         storage_context: StorageContext,
         **kwargs: Any,
     ):
         self._insert_batch_size=insert_batch_size
-        self._splitter = splitter
         self._service_context = service_context
         self._storage_context = storage_context
         self._vector_store: VectorStore = self._storage_context.get_vector_store(name_vector_store=name_vector_store)
