@@ -28,7 +28,7 @@ class InitializeDatabase:
         splitter_config: SentenceSplitterConfig,
         milvus_config: MilvusConfig,
         encoder_config: CrossEmbeddingConfig,
-        other_config: Optional[OtherConfig],
+        other_config: OtherConfig,
     ) -> None:
         # config
         self.splitter_config = splitter_config
@@ -55,21 +55,35 @@ class InitializeDatabase:
             callback_manager=self.callback_manager,
         )
 
+        #TODO: build milvus vector from documents
+        milvus_vector_store = MilvusVectorStore(
+            host=self.milvus_config.host,
+            port=self.milvus_config.port,
+            address=self.milvus_config.address,
+            uri=self.milvus_config.uri,
+            user=self.milvus_config.user,
+            consistency_level=self.milvus_config.consistency_level,
+            doc_id_field=self.milvus_config.primary_field,
+            text_field=self.milvus_config.text_field,
+            embedding_field=self.milvus_config.embedding_field,
+            collection_name=self.milvus_config.collection_name,
+            index_params=self.milvus_config.index_params,
+            search_params=self.milvus_config.search_params,
+            overwrite=self.milvus_config.overwrite,
+        )
+
+        # construct index and customize storage context
+        self.storage_context = StorageContext.from_defaults(
+            vector_store=milvus_vector_store,
+            vectorstore_name=self.milvus_config.vectorstore_name,
+        )
 
     def main(self, documents: List[Document]):
 
         """Wrap time"""
         start_build_collection_index = int(round(time.time() * 1000))
 
-        #TODO: build milvus vector from documents
-        milvus_vector_store = MilvusVectorStore(self.milvus_config)
-
-        # construct index and customize storage context
-        storage_context = StorageContext.from_defaults(
-            vector_store=milvus_vector_store,
-            vectorstore_name=self.milvus_config.vectorstore_name,
-        )
-
+        # Fisrt step: Normalize text
         for doc in documents:
             doc.text = self.normalizer.normalize(doc.text)
 
@@ -88,15 +102,15 @@ class InitializeDatabase:
         data_ingestor = DatabaseEngine(
             insert_batch_size=self.other_config.insert_batch_size,
             callback_manager=self.callback_manager,
-            splitter=self.normalizer,
             service_context=self.service_context,
-            storage_context=storage_context,
+            storage_context=self.storage_context,
             name_vector_store=self.milvus_config.vectorstore_name,
+            **vars(self.other_config),
         )
 
         data_ingestor.run_engine(nodes=nodes, show_progress=True)
 
-        storage_context.persist()
+        self.storage_context.persist()
         end_build_collection_index = int(round(time.time() * 1000))
         print(f"Time for build collection and index: {end_build_collection_index - start_build_collection_index} ms")
 
