@@ -32,7 +32,7 @@ class DatabaseEngine(BaseEngine):
         name_vector_store: str,
         service_context: ServiceContext,
         storage_context: StorageContext,
-        kwargs: Any,
+        **kwargs: Any,
     ):
         self._insert_batch_size=insert_batch_size
         self._splitter = splitter
