@@ -23,9 +23,12 @@ class RetriverEngine(BaseEngine):
         callback_manager: Optional[CallbackManager],
         retriever: BaseRetriever,
         reranker: Optional[BaseReranker] = None,
+        use_async: bool = False,
+        **kwargs: Any,
     ) -> None:
         self.retriever = retriever
         self.reranker = reranker
+        self.use_async = use_async
         super().__init__(
             callback_manager=callback_manager
         )
