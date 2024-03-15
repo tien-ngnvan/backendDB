@@ -98,10 +98,10 @@ class MilvusVectorStore(VectorStore):
         address: Optional[str] = None,
         user: Optional[str] = None,
         collection_name: str = "rag_collection",
-        dim: Optional[int] = None,
+        embedding_dim: Optional[int] = None,
         embedding_field: str = DEFAULT_EMBEDDING_KEY,
         doc_id_field: str = DEFAULT_DOC_ID_KEY,
-        text_field: Optional[str] = DEFAULT_TEXT_KEY,
+        primary_field: Optional[str] = DEFAULT_TEXT_KEY,
         consistency_level: str = "Strong",
         overwrite: bool = False,
         search_params: Optional[Dict[str, Union[str, dict]]] = None, 
@@ -125,10 +125,10 @@ class MilvusVectorStore(VectorStore):
         self.uri = uri
         self.user = user
         self.collection_name = collection_name
-        self.dim = dim
+        self.dim = collection_name
         self.embedding_field = embedding_field
         self.doc_id_field = doc_id_field
-        self.text_field = text_field
+        self.text_field = primary_field
         self.consistency_level = consistency_level
         self.overwrite = overwrite
 
