@@ -125,7 +125,7 @@ class MilvusVectorStore(VectorStore):
         self.uri = uri
         self.user = user
         self.collection_name = collection_name
-        self.dim = collection_name
+        self.dim = embedding_dim
         self.embedding_field = embedding_field
         self.doc_id_field = doc_id_field
         self.text_field = primary_field
