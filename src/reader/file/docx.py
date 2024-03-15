@@ -8,9 +8,10 @@ from src.reader.base_reader import BaseReader
 class DocxReader(BaseReader):
     """Docx parser."""
 
+    #TODO: return is list
     def load_data(
         self, file: Path, extra_info: Optional[Dict] = None
-    ) -> Document:
+    ) -> List[Document]:
         """Parse file."""
         try:
             import docx2txt
@@ -25,4 +26,4 @@ class DocxReader(BaseReader):
         if extra_info is not None:
             metadata.update(extra_info)
 
-        return Document(text=text, metadata=metadata or {})
+        return [Document(text=text, extra_info=metadata)]
