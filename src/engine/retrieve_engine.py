@@ -3,7 +3,7 @@
 """Base query engine."""
 
 import logging
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 from src.callbacks.callback_manager import CallbackManager
 from src.node.base_node import NodeWithScore
@@ -40,13 +40,13 @@ class RetriverEngine(BaseEngine):
     async def arun_engine(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         return await self.asearch(query_bundle=query_bundle)
 
-    def search(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
+    def search(self, query_bundle: QueryBundle) -> Tuple[List[NodeWithScore], List[NodeWithScore]]:
         nodes = self.retriever.retrieve(query_bundle)
-        nodes = self._rerank_nodes(
+        rerank_nodes = self._rerank_nodes(
             nodes=nodes,
             query_bundle=query_bundle
         )
-        return nodes
+        return nodes, rerank_nodes
 
     async def asearch(self, query_bundle: QueryBundle) -> List[NodeWithScore]:
         nodes = await self.retriever.aretrieve(query_bundle)
