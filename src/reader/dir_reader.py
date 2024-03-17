@@ -16,11 +16,13 @@ from src.node.base_node import Document
 from src.reader.base_reader import BaseReader
 from .file.docx import DocxReader
 from .file.txt import TxtReader
+from .file.csv import CsvReader
 
 
 DEFAULT_FILE_READER_CLS: Dict[str, Type[BaseReader]] = {
     ".docx": DocxReader,
     ".txt": TxtReader,
+    "csv": CsvReader,
 }
 
 
