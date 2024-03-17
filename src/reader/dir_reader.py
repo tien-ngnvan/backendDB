@@ -22,7 +22,7 @@ from .file.csv import CsvReader
 DEFAULT_FILE_READER_CLS: Dict[str, Type[BaseReader]] = {
     ".docx": DocxReader,
     ".txt": TxtReader,
-    "csv": CsvReader,
+    ".csv": CsvReader,
 }
 
 
