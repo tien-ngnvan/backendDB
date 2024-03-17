@@ -6,6 +6,7 @@ import os
 
 from src.pipeline.milvus_retrieve import MilvusRetrieverPipeline
 from src.configs.configuration import ConfigurationManager
+from src.node.base_node import MetadataMode
 
 startTime_load = int(round(time.time() * 1000))
 
@@ -40,12 +41,29 @@ print(f"Time for load pipeline: {endTime_load - startTime_load} ms")
 ##########
 
 def retrieve(query_user: str):
-    nodes_retrieve = retriever_pipeline.main(
+    # Call pipeline
+    nodes_retrieve, nodes_rerank = retriever_pipeline.main(
             query=query_user,
         )
-    nodes_rerank =None
+    
+    # Format text to display
+    format_nodes_retrieve = []
+    for node in nodes_retrieve:
+        text = node.get_content(metadata_mode=MetadataMode.ALL).strip()
+        score = node.score
+        format_nodes_retrieve.append(
+            f"Text:\n'''{text}'''\nScore:{score}"
+        )
+        format_nodes_retrieve.append("\n" + "-" * 20 + "\n")
 
-    return nodes_retrieve, nodes_rerank 
+    format_nodes_rerank=[]
+    for node in nodes_rerank:
+        format_nodes_rerank.append(
+            f"Text:\n'''{node['text_bundle']}'''\nScore:{node['score'].item()}"
+        )
+        format_nodes_rerank.append("\n" + "-" * 20 + "\n")
+
+    return "".join(format_nodes_retrieve), "".join(format_nodes_rerank) 
 
 with gr.Blocks() as demo:
     with gr.Row():
