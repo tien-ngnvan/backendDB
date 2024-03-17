@@ -40,7 +40,7 @@ while True:
     # Main
     query_user = input("Input: ")
     startTime = int(round(time.time() * 1000))
-    nodes = retriever_pipeline.main(
+    nodes, rerank_nodes = retriever_pipeline.main(
         query=query_user,
     )
     for node in nodes:
