@@ -29,6 +29,9 @@ class MilvusRetrieverPipeline:
         asym_config: Optional[AsymRerankConfig] = None
     ) -> None:
         self.milvus_config = milvus_config
+        # Ensure not building index from scratch
+        if self.milvus_config.overwrite == True:
+            self.milvus_config.overwrite = False
         self.asym_config = asym_config
         self.other_config = other_config
 
@@ -89,12 +92,13 @@ class MilvusRetrieverPipeline:
         )
         
         #TODO: query
-        docs = engine.search(QueryBundle(query))
+        nodes, rerank_nodes = engine.search(QueryBundle(query))
+        print(nodes)
 
         end_build_retrieve_search = int(round(time.time() * 1000))
         print(f"Time for build retriever and search: {end_build_retrieve_search - start_build_retrieve_search} ms")
 
-        return docs
+        return nodes, rerank_nodes
 
     def apply_rerank():
         pass
