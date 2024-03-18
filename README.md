@@ -51,9 +51,17 @@ Some arguement need to test:
 
 
 ## Usecase 
+### normal case
 Folder `examples/` has some usecases, generally split into three steps:
 1. call `DirectoryReader` from `src.reader.dir_reader` and put list of file path to argument `input_files`
+    - using `input_dir` (+ `num_files_limit` if loading limit files) to read files in that directory (set `recursive=True` if loadding nested folder)
 
 2. initialize Hydra config and put into argument `config` of `ConfigurationManager`
 
 3. Call class pipeline in folder `src.pipeline`, put config and run `main()` function. Currently only supporting pipeline for data ingestion.  
+
+### runing law database
+Law database is created by using csv files, only run the scripts below:
+```
+python examples/milvus_with_law.py
+```
