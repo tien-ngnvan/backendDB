@@ -65,3 +65,9 @@ Law database is created by using csv files, only run the scripts below:
 ```
 python examples/milvus_with_law.py
 ```
+
+### gradio for visualzing retrieve and rerank result from retriever pipeline
+Note that first query will consuming much time to load pipeline, connect database. This pipeline will be optimized to load when loading gradio (init) 
+```
+python deploy/deploy_gradio.py
+```
