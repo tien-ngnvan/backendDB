@@ -3,6 +3,7 @@ import time
 from omegaconf import DictConfig
 from hydra import compose, initialize_config_dir
 from dataclasses import asdict
+from tqdm.auto import tqdm
 
 from src.core.storage_context import StorageContext
 from src.core.service_context import ServiceContext
@@ -47,7 +48,7 @@ other_config = manager.get_orther_config()
 # normalizer
 normalizer = ViNormalizer() if other_config.language == "vi" else EngNormalizer()
 
-# encoder 
+# encoder   
 emb_model = CrossEncoder(
     qry_model_name=encoder_config.qry_model_name,
     psg_model_name=encoder_config.psg_model_name,
@@ -86,7 +87,7 @@ print(f"Time for load pipeline: {endTime_load - startTime_load} ms")
 ##########
 startTime_run= int(round(time.time() * 1000))
 
-for text_node in csv_files:
+for text_node in tqdm(csv_files, desc="Normalizing scripts"):
     text_node.text = normalizer.normalize(text_node.text)
 
 # is one
