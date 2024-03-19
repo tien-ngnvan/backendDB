@@ -207,13 +207,13 @@ class DirectoryReader(BaseReader):
             documents (List[Document]): List of documents.
         """
         for doc in documents:
-            # Keep only metadata['file_path'] in both embedding and llm content
+            # Keep only metadata['file_name'] in both embedding and llm content
             # str, which contain extreme important context that about the chunks.
             # Dates is provided for convenience of postprocessor such as
             # TimeWeightedPostprocessor, but excluded for embedding and LLMprompts
             doc.excluded_embed_metadata_keys.extend(
                 [
-                    "file_name",
+                    "file_path",
                     "file_type",
                     "file_size",
                     "creation_date",
@@ -223,7 +223,7 @@ class DirectoryReader(BaseReader):
             )
             doc.excluded_llm_metadata_keys.extend(
                 [
-                    "file_name",
+                    "file_path",
                     "file_type",
                     "file_size",
                     "creation_date",
