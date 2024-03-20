@@ -1,0 +1,10 @@
+qry_model_name: null
+psg_model_name: null
+token: null
+proxies: null
+methods: huggingface
+device: [0]
+embedding_batch_size: 10
+pooling: cls
+max_length: 512
+normalize: True

@@ -1,0 +1,8 @@
+rerank_model: asym
+model_name_or_path: null
+model: null
+tokenizer: null
+token: null
+device: null
+methods: huggingface
+proxies: null
