@@ -19,6 +19,7 @@ class ViNormalizer:
         3. removal of HTML tags
         """
         self._normalize_fns = [
+            self.truncate_text_by_byte,
             self.remove_emoticon,
             self.remove_bullets,
             self.remove_ordered_bullets,
@@ -55,6 +56,16 @@ class ViNormalizer:
         it will just call add synchronously.
         """
         return self.normalize(text)
+    
+    def truncate_text_by_byte(self, string_input: str) -> str:
+        """
+        Truncate a string to a certain number of bytes
+        """
+        encoded = string_input.encode('utf-8')
+        if len(encoded) > 65535:
+            string_back = encoded[:65535].decode('utf-8', 'ignore')
+            return string_back
+        return string_input
     
     def remove_emoticon(
         self,
